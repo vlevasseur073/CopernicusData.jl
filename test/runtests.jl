@@ -1,6 +1,8 @@
 using CopernicusData
 using Test
 
-@testset "CopernicusData.jl" begin
-    # Write your tests here.
-end
+include("test_cloud_storage.jl")
+include("test_yaxtree.jl")
+include("test_aws.jl")
+include("test_EOTriggering.jl")
+include("test_EOProducts.jl")

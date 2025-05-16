@@ -1,0 +1,63 @@
+[logging]
+# level = "Debug"
+level = "Info"
+
+[[breakpoints]]
+related_unit = "dummy1"
+break_mode = "s"
+storage = "dummy1.zarr"
+store_params = { }
+
+[[workflow]]
+module = "ExampleProcessor"
+processing_unit = "example_processor"
+name = "ExampleProcessor"
+inputs = [ "S03SLSLST" ]
+
+[workflow.parameters]
+timeliness = "NRT"
+start_time = "2023-03-15T09:59:00.000"
+stop_time = "2023-03-15T10:00:00.000"
+
+[[workflow.parameters.aux_files]]
+id = "SampleADFzarr"
+path = "s3://path/to/aux_file"
+store_type = "zarr"
+store_params = { secret_alias = "s3-input"}
+
+[[workflow.parameters.aux_files]]
+id = "SampleADFjson"
+path = "s3://path/to/aux_file"
+store_type = "json"
+store_params = { secret_alias = "s3-input"}
+
+[[workflow]]
+module = "EOTriggering"
+processing_unit = "dummy_processing_unit"
+name = "dummy2"
+inputs = [ "dummy1" ]
+parameters = { }
+
+["I/O"]
+modification_mode = "newproduct"
+
+  [["I/O".inputs_products]]
+  id = "S03SLSLST"
+  path="resources/S03SLSLST_20191227T124111_0179_A109_T883.zarr.zip"
+  store_type = "zarr"
+  store_params = { }
+
+  ["I/O".output_product]
+  id = "output"
+  path = "output.zarr"
+  store_type = "zarr"
+  store_params = { }
+
+[parallel_context]
+processes = 3
+cluster_type = "local"
+cluster_config = { }
+client_config = { }
+
+[cloud_config]
+secret_alias = "s3-input"
