@@ -84,6 +84,6 @@ jobs:
         shell: julia --project=docs --color=yes {0}
         run: |
           using Documenter: DocMeta, doctest
-          using EOPF
-          DocMeta.setdocmeta!(EOPF, :DocTestSetup, :(using EOPF); recursive=true)
-          doctest(EOPF)
+          using CopernicusData
+          DocMeta.setdocmeta!(CopernicusData, :DocTestSetup, :(using CopernicusData); recursive=true)
+          doctest(CopernicusData)
