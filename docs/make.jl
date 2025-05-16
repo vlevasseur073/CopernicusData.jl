@@ -1,23 +1,30 @@
-using CopernicusData
 using Documenter
+using CopernicusData
+push!(LOAD_PATH, "../src")
+using Plots
 
-DocMeta.setdocmeta!(CopernicusData, :DocTestSetup, :(using CopernicusData); recursive=true)
-
-makedocs(;
-    modules=[CopernicusData],
-    authors="Vincent Levasseur <vince.levasseur@protonmail.com> and contributors",
-    sitename="CopernicusData.jl",
-    format=Documenter.HTML(;
-        canonical="https://vlevasseur073.github.io/CopernicusData.jl",
-        edit_link="main",
-        assets=String[],
-    ),
-    pages=[
+makedocs(
+    sitename = "CopernicusData.jl",
+    format = Documenter.HTML(prettyurls = get(ENV, "CI", nothing) == "true"),
+    modules = [ CopernicusData ],
+    pages = [
+        "quickstart.md",
         "Home" => "index.md",
+        "Release Notes" => "release_notes.md",
+        "api.md",
     ],
+    remotes = nothing,
+    # checkdocs=:exports
+    checkdocs=:none
+#    repo = Documenter.Remotes.GitHub("vlevasseur073", "CopernicusData.jl")
+
 )
 
-deploydocs(;
-    repo="github.com/vlevasseur073/CopernicusData.jl",
-    devbranch="main",
+# Documenter can also automatically deploy documentation to gh-pages.
+# See "Hosting Documentation" and deploydocs() in the Documenter manual
+# for more information.
+deploydocs(
+    repo = "github.com/vlevasseur073/CopernicusData.jl.git",
+    devbranch="main"#,
+    # push_preview=true #needed for private project
 )

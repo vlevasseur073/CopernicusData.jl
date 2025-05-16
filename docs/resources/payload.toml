@@ -1,0 +1,32 @@
+[logging]
+level = "Info"
+
+[[breakpoints]]
+related_unit = "dummy1"
+break_mode = "s"
+storage = "dummy1.zarr"
+store_params = { }
+
+[[workflow]]
+module = "EOTriggering"
+processing_unit = "dummy_processing_unit"
+name = "dummy2"
+inputs = [ "dummy1" ]
+parameters = { }
+
+["I/O"]
+modification_mode = "newproduct"
+
+  [["I/O".inputs_products]]
+  id = "dummy"
+  path="../resources/yax.zarr"
+  store_type = "zarr"
+
+  ["I/O".output_product]
+  id = "output"
+  path = "output.zarr"
+  store_type = "zarr"
+
+[parallel_context]
+processes = 3
+cluster_type = "local"

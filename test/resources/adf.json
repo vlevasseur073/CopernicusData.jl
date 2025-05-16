@@ -1,0 +1,180 @@
+{
+    "title": "SL2 Processing Control Parameter File",
+    "baseline collection": "003",
+    "switches": {
+        "sw_lst": {
+            "description": "Switch determining the activation of LST processing and the inclusion of LST parameters in the output [0, 1]",
+            "value": 1,
+            "type": "int64"
+        },
+        "sw_lst_err": {
+            "description": "Switch enabling the computation and the output of LST_uncertainty [0, 1]",
+            "value": 1,
+            "type": "int64"
+        },
+        "sw_frp": {
+            "description": "Switch determining the activation of FRP processing and the inclusion of FRP parameters in the output [0, 1]",
+            "value": 0,
+            "type": "int64"
+        },
+        "sw_frp_err": {
+            "description": "Switch enabling the computation and the output of FRP_uncertainty [0, 1]",
+            "value": 0,
+            "type": "int64"
+        },
+        "sw_tcwv": {
+            "description": "Switch enabling the use of the LST total column water vapour climatology auxiliary file. If this switch is FALSE, the SLSTR L2 processing has to use the L1b Meteo annotations files [0, 1]",
+            "value": 1,
+            "type": "int64"
+        },
+        "sw_coeff": {
+            "description": "Switch enabling the temporal interpolation of LST coefficients [0, 1]",
+            "value": 0,
+            "type": "int64"
+        },
+        "sw_bayesian": {
+            "description": "Switch to enable the bayesian flag",
+            "value": 1,
+            "type": "int64"
+        },
+        "sw_cloud_gross_cloud": {
+            "description": "Switch to enable the gross_cloud cloud flag",
+            "value": 1,
+            "type": "int64"
+        },
+        "sw_cloud_thin_cirrus": {
+            "description": "Switch to enable the thin_cirrus cloud flag",
+            "value": 1,
+            "type": "int64"
+        },
+        "sw_cloud_medium_high": {
+            "description": "Switch to enable the medium_high cloud flag",
+            "value": 1,
+            "type": "int64"
+        },
+        "sw_cloud_fog_low_stratus": {
+            "description": "Switch to enable the fog_low_stratus cloud flag",
+            "value": 1,
+            "type": "int64"
+        },
+        "sw_cloud_spatial_coh": {
+            "description": "Switch to enable the 11_spatial_coherence cloud flag",
+            "value": 1,
+            "type": "int64"
+        },
+        "sw_cloud_16_small_scale": {
+            "description": "Switch to enable the 1.6_small_histogram cloud flag",
+            "value": 0,
+            "type": "int64"
+        },
+        "sw_cloud_16_large_scale": {
+            "description": "Switch to enable the 1.6_large_histogram cloud flag",
+            "value": 1,
+            "type": "int64"
+        },
+        "sw_cloud_11_12_na": {
+            "description": "Switch to enable the 11_12_view_difference cloud flag",
+            "value": 1,
+            "type": "int64"
+        },
+        "sw_cloud_37_11_na": {
+            "description": "Switch to enable the 3.7_11_view_difference cloud flag",
+            "value": 1,
+            "type": "int64"
+        },
+        "sw_cloud_visible": {
+            "description": "Switch to enable the visible cloud flag",
+            "value": 1,
+            "type": "int64"
+        },
+        "sw_cloud_ir_hist": {
+            "description": "Switch to enable the thermal_histogram cloud flag",
+            "value": 0,
+            "type": "int64"
+        },
+        "sw_cloud_225_small_scale": {
+            "description": "Switch to enable the 2.25_small_histogram cloud flag",
+            "value": 0,
+            "type": "int64"
+        },
+        "sw_cloud_225_large_scale": {
+            "description": "Switch to enable the 2.25_large_histogram cloud flag",
+            "value": 1,
+            "type": "int64"
+        },
+        "sw_cloud_137_test": {
+            "description": "Switch to enable the 1.37_threshold cloud flag",
+            "value": 1,
+            "type": "int64"
+        }
+    },
+    "general": {
+        "t_missing": {
+            "description": "Percentage of unfilled pixels above which a line of the image is considered affected by a gap [0, 100]",
+            "value": 75,
+            "type": "int64"
+        },
+        "nadir_margin": {
+            "description": "Number of nadir qualities margins needed for uncertainties computation",
+            "value": 240,
+            "type": "int64"
+        },
+        "oblique_margin": {
+            "description": "Number of oblique qualities margins needed for uncertainties computation",
+            "value": 45,
+            "type": "int64"
+        }
+    },
+    "specific_land_parameters": {
+        "th_isto_vis1": {
+            "description": "Threshold associated with the first Istomina VIS and NIR test (using 0.87 and 1.6 \u00b5m)",
+            "value": 80,
+            "type": "int64"
+        },
+        "th_isto_vis2": {
+            "description": "Threshold associated with the second Istomina VIS and NIR test (using 0.87 and 0.66 \u00b5m)",
+            "value": 10,
+            "type": "int64"
+        },
+        "th_isto_vis3": {
+            "description": "Threshold associated with the third Istomina VIS and NIR test (using 0.55 and 0.66 \u00b5m)",
+            "value": 40,
+            "type": "int64"
+        },
+        "th_isto_tir1": {
+            "description": "Threshold associated with the first Istomina Thermal  test (using 3.7 and 10.8 \u00b5m)",
+            "value": 3,
+            "type": "int64"
+        },
+        "th_isto_tir2": {
+            "description": "Threshold associated with the second Istomina thermal test (using 3.7 and 12 \u00b5m)",
+            "value": 3,
+            "type": "int64"
+        },
+        "cwed": {
+            "description": "Critical Water Equivalent Depth",
+            "value": 0.015,
+            "type": "float64"
+        },
+        "skt_correction": {
+            "description": "SKT correction factor to be added before RTTOV call",
+            "value": 0.17,
+            "type": "float64"
+        },
+        "th_day": {
+            "description": "Threshold indicating the day and night limit for probabilistic cloud detection",
+            "value": 85,
+            "type": "int64"
+        },
+        "th_limit": {
+            "description": "PDF confidence limit threshold defined for the three basic cloud tests considered by probabilistic approach",
+            "value": 0.01,
+            "type": "float64"
+        },
+        "tp_al_resolution": {
+            "description": "Tie-point along-track resolution to be used for RTTOV computation",
+            "value": 16,
+            "type": "int64"
+        }
+    }
+}
