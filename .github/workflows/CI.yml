@@ -6,6 +6,13 @@ on:
     tags: ['*']
   pull_request:
   workflow_dispatch:
+env:
+  AWS_ACCESS_KEY_ID : ${{ secrets.MINIO_ROOT_USER }}
+  AWS_SECRET_ACCESS_KEY : ${{ secrets.MINIO_ROOT_PASSWORD }}
+#   AWS_ENDPOINT_URL : ${{ secrets.AWS_ENDPOINT_URL }}
+  # AWS_DEFAULT_REGION : ${{ secrets.AWS_DEFAULT_REGION }}
+  AWS_ENDPOINT_URL : http://localhost:9001
+  AWS_DEFAULT_REGION : aregion
 concurrency:
   # Skip intermediate builds: always.
   # Cancel intermediate builds: only if it is a pull request build.
@@ -19,20 +26,21 @@ jobs:
     permissions: # needed to allow julia-actions/cache to proactively delete old caches that it has created
       actions: write
       contents: read
+      packages: read
     strategy:
       fail-fast: false
       matrix:
         version:
           - '1.11'
-          - '1.6'
           - 'pre'
         os:
           - ubuntu-latest
         arch:
           - x64
-          - x86
     steps:
       - uses: actions/checkout@v4
+        with:
+          lfs: true
       - uses: julia-actions/setup-julia@v2
         with:
           version: ${{ matrix.version }}
@@ -41,7 +49,7 @@ jobs:
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
       - uses: julia-actions/julia-processcoverage@v1
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v5
         with:
           files: lcov.info
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -55,6 +63,8 @@ jobs:
       statuses: write
     steps:
       - uses: actions/checkout@v4
+        with:
+            lfs: true
       - uses: julia-actions/setup-julia@v2
         with:
           version: '1'
@@ -74,6 +84,6 @@ jobs:
         shell: julia --project=docs --color=yes {0}
         run: |
           using Documenter: DocMeta, doctest
-          using CopernicusData
-          DocMeta.setdocmeta!(CopernicusData, :DocTestSetup, :(using CopernicusData); recursive=true)
-          doctest(CopernicusData)
+          using EOPF
+          DocMeta.setdocmeta!(EOPF, :DocTestSetup, :(using EOPF); recursive=true)
+          doctest(EOPF)
