@@ -37,7 +37,7 @@ end
 
     try
 
-        # Populate the bucket with test data
+        # Populate the bucket with zarr test data
         test_resources = "resources"
         upload_zarr_to_s3(joinpath(test_resources,"yax.zarr"),store,"test/yax.zarr")
 
@@ -47,7 +47,56 @@ end
         @test z isa ZGroup
         @test z.arrays["layer"] isa ZArray
 
+
+        # Test different file types
+        test_files = Dict(
+            "test.txt" => ("Hello, text!", "text/plain"),
+            "test.jpg" => ([0xff, 0xd8, 0xff], "image/jpeg"),
+            "test.png" => ([0x89, 0x50, 0x4E, 0x47], "image/png"),
+            "test.pdf" => ("%PDF-1.5", "application/pdf"),
+            "test.unknown" => ("Some data", "application/octet-stream")
+        )
+
+        for (filename, (content, expected_type)) in test_files
+            # Create temporary file
+            tmpfile = tempname() * filename
+            write(tmpfile, content)
+
+            # Upload file
+            bucket = store.bucket
+            key = "test/$filename"
+            upload_to_s3(tmpfile, bucket, key)
+
+            # Verify content and content type
+            AWS.global_aws_config(store.aws)
+            response = S3.head_object(bucket, key)
+            @test response["Content-Type"] == expected_type
+
+            # Check content
+            obj = S3.get_object(bucket, key)
+            # @test obj == content
+            if typeof(content) == String
+                @test String(obj) == content
+            else
+                @test obj == content
+            end
+
+            # Clean up temporary file
+            rm(tmpfile)
+        end
+
+        # Test explicit content type override
+        # tmpfile = tempname() * ".txt"
+        # write(tmpfile, "Custom content type")
+        # upload_to_s3(tmpfile, store.bucket, "test/custom.txt"; 
+        #             content_type="application/custom")
+        
+        # response = S3.head_object(store.bucket, "test/custom.txt")
+        # @test response["Content-Type"] == "application/custom"
+        # rm(tmpfile)
+        
+
     finally
         kill_minio_server(server)
     end
-end 
+end
