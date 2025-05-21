@@ -5,14 +5,14 @@ Install the latest version of CopernicusData.jl using the Julia's built-in packa
 
 ```julia
 julia> ]
-(v1.9) pkg> add CopernicusData
+(v1.10) pkg> add CopernicusData
 ```
 
 The package can be updated via the package manager by
 
 ```julia
-(v1.9) pkg> update CopernicusData
+(v1.10) pkg> update CopernicusData
 ```
 
-!!! warn "Use Julia 1.9 or newer"
+!!! warn "Use Julia 1.10 or newer"
     
