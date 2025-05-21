@@ -19,4 +19,6 @@ This is a beta release
 
 ## Known problems or limitations
  * Reading zipped zarr is not fully handled. Feature to be requested to Zarr.jl package [https://github.com/JuliaIO/Zarr.jl/issues/189](https://github.com/JuliaIO/Zarr.jl/issues/189). The current Zarrl.ZipStore handles files on the local filesystem not yet files on a cloud storage.
+ * Basic interpolations are implementations. To be improved in the future releases, in connection with upcoming improvements of `YAXArrays.jl`
+ * Handling the legacy SAFE format for few missions to come. (Likely Sentinle-3 at first)
 
