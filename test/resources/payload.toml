@@ -12,7 +12,7 @@ store_params = { }
 module = "ExampleProcessor"
 processing_unit = "example_processor"
 name = "ExampleProcessor"
-inputs = [ "S03SLSLST" ]
+inputs = [ "yax-input" ]
 
 [workflow.parameters]
 timeliness = "NRT"
@@ -42,8 +42,8 @@ parameters = { }
 modification_mode = "newproduct"
 
   [["I/O".inputs_products]]
-  id = "S03SLSLST"
-  path="resources/S03SLSLST_20191227T124111_0179_A109_T883.zarr.zip"
+  id = "yax-input"
+  path="resources/yax.zarr.zip"
   store_type = "zarr"
   store_params = { }
 
