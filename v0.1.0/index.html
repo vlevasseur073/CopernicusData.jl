@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Home · CopernicusData.jl</title><meta name="title" content="Home · CopernicusData.jl"/><meta property="og:title" content="Home · CopernicusData.jl"/><meta property="twitter:title" content="Home · CopernicusData.jl"/><meta name="description" content="Documentation for CopernicusData.jl."/><meta property="og:description" content="Documentation for CopernicusData.jl."/><meta property="twitter:description" content="Documentation for CopernicusData.jl."/><script data-outdated-warner src="assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="assets/documenter.js"></script><script src="search_index.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="quickstart/">CopernicusData.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="quickstart/">QuickStart</a></li><li class="is-active"><a class="tocitem" href>Home</a><ul class="internal"><li><a class="tocitem" href="#The-Data-structure"><span>The Data structure</span></a></li><li><a class="tocitem" href="#Orchestration"><span>Orchestration</span></a></li></ul></li><li><a class="tocitem" href="release_notes/">Release Notes</a></li><li><span class="tocitem">Examples</span><ul><li><a class="tocitem" href="examples/">Sentinel-3 zarr products</a></li></ul></li><li><a class="tocitem" href="api/">API Reference</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Home</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Home</a></li></ul></nav><div class="docs-right"><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="CopernicusData.jl"><a class="docs-heading-anchor" href="#CopernicusData.jl">CopernicusData.jl</a><a id="CopernicusData.jl-1"></a><a class="docs-heading-anchor-permalink" href="#CopernicusData.jl" title="Permalink"></a></h1><p>Documentation for <a href="https://github.com/vlevasseur073/CopernicusData.jl">CopernicusData.jl</a></p><p>CopernicusData is a framework to be used for Earth Observation satellite data processing from the EU Copernicus program, especially the Sentinels Missions. It defines a data structure for managing, storing EO data and a light orchestration framework to implement and chain processing steps.</p><img src="index-ef743e78.svg" alt="Example block output"/><h2 id="The-Data-structure"><a class="docs-heading-anchor" href="#The-Data-structure">The Data structure</a><a id="The-Data-structure-1"></a><a class="docs-heading-anchor-permalink" href="#The-Data-structure" title="Permalink"></a></h2><p>The data structure used in <code>CopernicusData.jl</code> is mostly focused on zarr format,  using <a href="https://github.com/JuliaIO/Zarr.jl"><code>Zarr.jl</code></a> package. The data representation is based on <a href="https://github.com/JuliaDataCubes/YAXArrays.jl"><code>YAXArrays.jl</code></a>. Though it is designed to handle the Sentinels new EOPF product format, it remains fully generic and can represent any kind of hierarchical data tree structure. Please visit <a href="https://eopf.copernicus.eu/eopf/">https://eopf.copernicus.eu/eopf/</a> to have further details about the EOPF data format.</p><h3 id="YAXTrees-module"><a class="docs-heading-anchor" href="#YAXTrees-module"><code>YAXTrees</code> module</a><a id="YAXTrees-module-1"></a><a class="docs-heading-anchor-permalink" href="#YAXTrees-module" title="Permalink"></a></h3><p>The <code>YAXTrees</code> module provide a hierarchical tree structure of <code>YAXArrays</code> or <code>Datasets</code>.</p><p>Below is a basic usage to construct a tree structure</p><pre><code class="language-julia hljs">root = YAXTree()
+root.childA = YAXTree(&quot;childA&quot;)
+root.childB = YAXTree(&quot;childB&quot;)
+root.childA.grandchild = YAXTree(&quot;grandchild&quot;)
+root</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">📂 root
+├─ 📂 childA
+├─ └─ 📂 grandchild
+└─ 📂 childB
+</code></pre><p>Using Zarr backend, a recursive zarr structure representing Copernicus product can be accessed with the <code>open_datatree</code> function. Using the feature from YAXArrays.jl, based on DiskArrays.jl, the data is lazy loaded.</p><pre><code class="language-julia hljs">tree = open_datatree(path)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">📂 root
+├─ 📂 conditions
+├─ ├─ 📂 auxiliary
+├─ ├─ └─ 📂 orphan
+├─ ├─ 📂 geometry
+├─ ├─ 📂 meteorology
+├─ ├─ 📂 processing
+├─ ├─ └─ 📂 orphan
+├─ └─ 📂 time
+├─ 📂 measurements
+├─ └─ 📂 orphan
+└─ 📂 quality
+└─ └─ 📂 orphan
+</code></pre><p>A more detailed view can be displayed</p><pre><code class="language-julia hljs">YAXTrees.show_tree(tree; details=true)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">📂 root
+├─ 📂 conditions
+├─ ├─ 📂 auxiliary
+├─ ├─   📊 Dataset
+├─ ├─ └─ 📂 orphan
+├─ ├─ └─   📊 Dataset
+├─ ├─ 📂 geometry
+├─ ├─   📊 Dataset
+├─ ├─ 📂 meteorology
+├─ ├─   📊 Dataset
+├─ ├─ 📂 processing
+├─ ├─   📊 Dataset
+├─ ├─ └─ 📂 orphan
+├─ ├─ └─   📊 Dataset
+├─ └─ 📂 time
+├─ └─   📊 Dataset
+├─ 📂 measurements
+├─   📊 Dataset
+├─ └─ 📂 orphan
+├─ └─   📊 Dataset
+└─ 📂 quality
+└─   📊 Dataset
+└─ └─ 📂 orphan
+└─ └─   📊 Dataset</code></pre><p>You can use dictionary or the traditional dot indexing to access any node of the tree structure</p><pre><code class="language-julia hljs">tree[&quot;measurements&quot;].data</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">YAXArray Dataset
+Shared Axes: 
+  (<span class="sgr38_5" style="color:#ff875f">↓ columns</span> Sampled{Int64} <span class="sgr38_5" style="color:#ff875f">1:1500</span> <span class="sgr38_5" style="color:#808080">ForwardOrdered</span> <span class="sgr38_5" style="color:#808080">Regular</span> <span class="sgr38_5" style="color:#808080">Points</span>,
+  <span class="sgr38_5" style="color:#0087d7">→ rows   </span> Sampled{Int64} <span class="sgr38_5" style="color:#0087d7">1:1200</span> <span class="sgr38_5" style="color:#808080">ForwardOrdered</span> <span class="sgr38_5" style="color:#808080">Regular</span> <span class="sgr38_5" style="color:#808080">Points</span>)
+
+<span class="sgr94">Variables: </span>
+latitude, longitude, lst, x, y
+
+</code></pre><pre><code class="language-julia hljs">tree.conditions.geometry.solar_zenith_tn</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr90">┌ </span><span class="sgr38_5" style="color:#ff875f">130</span>×<span class="sgr38_5" style="color:#0087d7">1200</span> YAXArray{Union{Missing, Float64}, 2}<span class="sgr90"> ┐</span>
+<span class="sgr90">├───────────────────────────────────────────────┴──────────────────────── dims ┐</span>
+  <span class="sgr38_5" style="color:#ff875f">↓ columns</span> Sampled{Int64} <span class="sgr38_5" style="color:#ff875f">1:130</span> <span class="sgr38_5" style="color:#808080">ForwardOrdered</span> <span class="sgr38_5" style="color:#808080">Regular</span> <span class="sgr38_5" style="color:#808080">Points</span>,
+  <span class="sgr38_5" style="color:#0087d7">→ rows   </span> Sampled{Int64} <span class="sgr38_5" style="color:#0087d7">1:1200</span> <span class="sgr38_5" style="color:#808080">ForwardOrdered</span> <span class="sgr38_5" style="color:#808080">Regular</span> <span class="sgr38_5" style="color:#808080">Points</span>
+<span class="sgr90">├──────────────────────────────────────────────────────────────────── metadata ┤</span>
+  Dict{String, Any} with 8 entries:
+  &quot;units&quot;         =&gt; &quot;degrees&quot;
+  &quot;coordinates&quot;   =&gt; &quot;x y&quot;
+  &quot;short_name&quot;    =&gt; &quot;solar_zenith_tn&quot;
+  &quot;missing_value&quot; =&gt; NaN
+  &quot;name&quot;          =&gt; &quot;solar_zenith_tn&quot;
+  &quot;long_name&quot;     =&gt; &quot;solar zenith angle&quot;
+  &quot;standard_name&quot; =&gt; &quot;solar_zenith_angle&quot;
+  &quot;_FillValue&quot;    =&gt; NaN
+<span class="sgr90">├─────────────────────────────────────────────────────────────── loaded lazily ┤</span>
+  data size: 1.19 MB
+<span class="sgr90">└──────────────────────────────────────────────────────────────────────────────┘</span></code></pre><h3 id="EOProduct-module"><a class="docs-heading-anchor" href="#EOProduct-module"><code>EOProduct</code> module</a><a id="EOProduct-module-1"></a><a class="docs-heading-anchor-permalink" href="#EOProduct-module" title="Permalink"></a></h3><p>***deprecated*** </p><h2 id="Orchestration"><a class="docs-heading-anchor" href="#Orchestration">Orchestration</a><a id="Orchestration-1"></a><a class="docs-heading-anchor-permalink" href="#Orchestration" title="Permalink"></a></h2><p>A light orchestration is providing by the ̀<code>EOTriggering</code> module.</p><pre class="documenter-example-output"><code class="nohighlight hljs ansi">[parallel_context]
+cluster_type = &quot;local&quot;
+processes = 3
+
+[logging]
+level = &quot;Info&quot;
+
+[&quot;I/O&quot;]
+modification_mode = &quot;newproduct&quot;
+
+    [&quot;I/O&quot;.output_product]
+    store_type = &quot;zarr&quot;
+    id = &quot;output&quot;
+    path = &quot;output.zarr&quot;
+
+    [[&quot;I/O&quot;.inputs_products]]
+    store_type = &quot;zarr&quot;
+    id = &quot;dummy&quot;
+    path = &quot;../resources/yax.zarr&quot;
+
+[[workflow]]
+name = &quot;dummy2&quot;
+processing_unit = &quot;dummy_processing_unit&quot;
+module = &quot;EOTriggering&quot;
+inputs = [&quot;dummy1&quot;]
+
+    [workflow.parameters]
+
+[[breakpoints]]
+break_mode = &quot;s&quot;
+storage = &quot;dummy1.zarr&quot;
+related_unit = &quot;dummy1&quot;
+
+    [breakpoints.store_params]
+nothing</code></pre><pre><code class="language-julia hljs">payload_file_path=&quot;../resources/payload.toml&quot;
+EOTriggering.run(payload_file_path)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr36"><span class="sgr1">[ Info: </span></span>List of inputs:
+<span class="sgr36"><span class="sgr1">[ Info: </span></span> - input: dummy
+<span class="sgr36"><span class="sgr1">[ Info: </span></span>Running dummy2(EOTriggering.dummy_processing_unit)
+<span class="sgr36"><span class="sgr1">[ Info: </span></span>Hello !</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="quickstart/">« QuickStart</a><a class="docs-footer-nextpage" href="release_notes/">Release Notes »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.11.4 on <span class="colophon-date" title="Wednesday 21 May 2025 08:56">Wednesday 21 May 2025</span>. Using Julia version 1.11.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
