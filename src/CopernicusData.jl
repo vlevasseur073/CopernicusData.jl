@@ -8,6 +8,8 @@ export unzip_zarr_to_tempdir, upload_zarr_to_s3, upload_to_s3
 
 include("EOProducts.jl")
 include("YAXTrees.jl")
+include("interpolation.jl")
+export linear_interpolation
 include("EOTriggering.jl")
 include("ExampleProcessor.jl")
 
