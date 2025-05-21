@@ -1,7 +1,7 @@
 name = "CopernicusData"
 uuid = "40f541ec-ef23-43f7-b2aa-6425eeeec50a"
 authors = ["Vincent Levasseur <vince.levasseur@protonmail.com>"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 AWS = "fbe9abb3-538b-5e4e-ba9e-bc94f4f92ebc"
