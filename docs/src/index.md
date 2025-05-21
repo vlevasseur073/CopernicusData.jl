@@ -11,7 +11,7 @@ It defines a data structure for managing, storing EO data and a light orchestrat
 ```@example env
 using CopernicusData # hide
 using Plots # hide
-path=joinpath(dirname(dirname(pathof(CopernicusData))), "resources/S03SLSLST_20191227T124111_0179_A109_T883.zarr.zip") # hide
+path=joinpath(dirname(dirname(pathof(CopernicusData))), "docs/resources/S03SLSLST_20191227T124111_0179_A109_T883.zarr.zip") # hide
 tree = open_datatree(path) # hide
 return nothing # hide
 ```
