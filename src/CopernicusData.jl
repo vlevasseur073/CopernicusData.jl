@@ -1,5 +1,12 @@
 module CopernicusData
 
+struct NotImplementedError <: Exception
+    msg::String
+    NotImplementedError(msg="This functionality is not implemented yet.") = new(msg)
+end
+
+export NotImplementedError
+
 include("aws.jl")
 export get_AWS_config, s3_list_bucket, s3_get_object
 

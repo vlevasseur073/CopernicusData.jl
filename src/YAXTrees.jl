@@ -7,7 +7,7 @@ using Dagger
 using JSON3
 using Mmap
 # using Graphs, GraphPlot, Colors
-import ..CopernicusData: get_AWS_config, s3_get_object
+import ..CopernicusData: get_AWS_config, s3_get_object, NotImplementedError
 
 
 mutable struct YAXTree
@@ -125,7 +125,6 @@ function open_datatree(path::String, driver::Union{Nothing,Symbol}=nothing;name:
     tmp_path, ext = splitext(rstrip(path,'/'))
     archive = false
     if ext == ".zip"
-        # tmp_path = unzip_zarr_to_tempdir(path)
         nozip_path = tmp_path
         archive = true
     else
@@ -281,8 +280,7 @@ function open_json_datatree(path::String;name::String="root")::YAXTree
 end
 
 function open_sen3_datatree(path)
-    @error "Not yet implemented"
-    throw("NotImplemented")
+    throw(NotImplementedError("This feature will be implemented in the future."))
 end
 
 # Iterator state:  Keeps track of the current node and the order of visiting

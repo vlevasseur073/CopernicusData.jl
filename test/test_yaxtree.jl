@@ -28,6 +28,34 @@
 
 end
 
+@testset "Testing YAXTree Constructors" begin
+    using YAXArrays
+    using Zarr
+    # Test default constructor
+    tree1 = YAXTree()
+    @test tree1.name == "root"
+    @test isnothing(tree1.parent)
+    @test isnothing(tree1.data)
+    @test isempty(tree1.children)
+
+    # Test constructor with name and data
+    data = YAXArray((Dim{:x}(1:10),), rand(10))
+    tree2 = YAXTree("tree2", data=data)
+    @test tree2.name == "tree2"
+    @test tree2.data == data
+    @test isempty(tree2.children)
+
+    # test constructor with zgroup
+    zgroup = Zarr.zopen("resources/yax.zarr")
+    tree3 = YAXTree(zgroup)
+    @test tree3.Dim_1 isa Dim
+    @test tree3.layer isa YAXArray
+    @test tree3.data isa Dataset
+    @test !isempty(tree3.children)
+    @test tree3.grp1 isa YAXTree
+    @test tree3.grp1.a1 isa YAXArray
+end
+
 @testset "Testing YAXTree from local zip file" begin
     using YAXArrays
     path = joinpath(dirname(@__FILE__), "resources/yax.zarr.zip")
@@ -68,6 +96,11 @@ end
     finally
         kill_minio_server(server)
     end
+end
+
+@testset "Testing YAXTree from SEN3" begin
+    path = joinpath(dirname(@__FILE__), "resources/safe.SEN3")
+    @test_throws NotImplementedError open_datatree(path) 
 end
 
 @testset "Testing YAXTrees.where" begin
