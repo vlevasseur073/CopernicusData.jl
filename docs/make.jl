@@ -11,8 +11,12 @@ makedocs(
         "quickstart.md",
         "Home" => "index.md",
         "Release Notes" => "release_notes.md",
+        "Examples" => Any[
+            "Sentinel-3 zarr products" =>"examples.md"
+        ],
         "api.md",
     ],
+    clean = false,
     remotes = nothing,
     # checkdocs=:exports
     checkdocs=:none
