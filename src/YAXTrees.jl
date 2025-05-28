@@ -1,6 +1,6 @@
 module YAXTrees
 
-export YAXTree, open_datatree, map_over_subtrees, add_children!
+export YAXTree, open_datatree, to_zarr, map_over_subtrees, add_children!
 
 using YAXArrays, Zarr
 using Dagger
@@ -435,6 +435,12 @@ function to_zarr(tree::YAXTree, path::String; compressor=Zarr.BloscCompressor())
         end
     end
     @map_over_subtrees yax_to_zarr tree
+
+    # Dump properties
+    attrs = joinpath(path, ".zattrs")
+    open(attrs, "w") do io
+        JSON3.pretty(io, dt.properties)
+    end
 end
 
 function where(cond::YAXArray{Bool}, val1, val2)::YAXArray
