@@ -8,16 +8,17 @@ CopernicusData is a framework to be used for Earth Observation satellite data pr
 especially the Sentinels Missions.
 It defines a data structure for managing, storing EO data and a light orchestration framework to implement and chain processing steps.
 
-```@example env
-using CopernicusData # hide
-using Plots # hide
-path=joinpath(dirname(dirname(pathof(CopernicusData))), "docs/resources/S03SLSLST_20191227T124111_0179_A109_T883.zarr.zip") # hide
-tree = open_datatree(path) # hide
-return nothing # hide
+```@setup env
+include("setup.jl")
+lst_path = joinpath(PRODUCT_PATH, SLSLST)
+local_path = joinpath(tempdir(),SLSLST)
+Downloads.download(lst_path, local_path)
+tree = open_datatree(local_path)
 ```
 
 ```@example env
-heatmap(tree.measurements.lst.data, title="Land Surface Temperature over Brazil seen by Sentinel-3 A") # hide
+lst_data = reverse(permutedims(tree.measurements.lst.data),dims=1) # hide
+heatmap(lst_data, title="Land Surface Temperature over Brazil (Sentinel-3 A)", c=:rainbow, xlabel="columns", ylabel="rows") # hide
 ```
 
 ## The Data structure
@@ -48,7 +49,7 @@ function.
 Using the feature from YAXArrays.jl, based on DiskArrays.jl, the data is lazy loaded.
 
  ```@example env
-tree = open_datatree(path)
+tree = open_datatree(local_path)
 ```
 
 A more detailed view can be displayed

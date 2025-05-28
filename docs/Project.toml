@@ -1,7 +1,9 @@
 [deps]
 AWS = "fbe9abb3-538b-5e4e-ba9e-bc94f4f92ebc"
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+CopernicusData = "40f541ec-ef23-43f7-b2aa-6425eeeec50a"
 DiskArrays = "3c3547ce-8d99-4f5e-a174-61eb10b00ae3"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
-CopernicusData = "40f541ec-ef23-43f7-b2aa-6425eeeec50a"
+GeoMakie = "db073c08-6b98-4ee5-b6a4-5efafb3259c6"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 TOML = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
