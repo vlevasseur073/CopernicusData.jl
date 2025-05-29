@@ -84,12 +84,12 @@ Get list of objects in a S3 bucket path: "s3://bucket/Folder/"
     end
 end
 
+"""
 function s3_get_object(full_path::String)
-    """
-    function s3_get_object(full_path::String)
-        Get and object from a S3 bucket given its full path (s3://....)
-        """
-        if !startswith(full_path,"s3://")
+    Get and object from a S3 bucket given its full path (s3://....)
+"""
+function s3_get_object(full_path::String)
+    if !startswith(full_path,"s3://")
         @error "Path is not an S3 bucket: $full_path"
         throw(ErrorException("Path is not an S3 bucket"))
     end

@@ -5,7 +5,14 @@
 using CopernicusData # hide
 pkgversion(CopernicusData) # hide
 ```
+
 ## Current release overview
+* Export YAXTrees.to_zarr function
+
+## History
+
+### v0.1.0
+
 * Implementation of data structure to hold the new CopernicusData zarr Sentinels products from the Copernicus mission
     * `YAXTrees` module implements f hierarchical tree structure of `YAXArrays` or `Datasets` from `YAXArrays.jl` package
 * Implementation of a light orchestrator to run any kind of processing module from a input payload file: 
