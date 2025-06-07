@@ -1,5 +1,6 @@
 using CopernicusData
-using Plots
+using CairoMakie
+using GeoMakie
 using Downloads
 
 const PRODUCT_PATH = "https://common.s3.sbg.perf.cloud.ovh.net/eoproducts"

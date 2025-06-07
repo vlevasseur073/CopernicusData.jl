@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Getting Started · CopernicusData.jl</title><meta name="title" content="Getting Started · CopernicusData.jl"/><meta property="og:title" content="Getting Started · CopernicusData.jl"/><meta property="twitter:title" content="Getting Started · CopernicusData.jl"/><meta name="description" content="Documentation for CopernicusData.jl."/><meta property="og:description" content="Documentation for CopernicusData.jl."/><meta property="twitter:description" content="Documentation for CopernicusData.jl."/><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../search_index.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../quickstart/">CopernicusData.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../quickstart/">QuickStart</a></li><li><a class="tocitem" href="../">Home</a></li><li class="is-active"><a class="tocitem" href>Getting Started</a><ul class="internal"><li><a class="tocitem" href="#Creating-Trees"><span>Creating Trees</span></a></li><li><a class="tocitem" href="#Tree-Navigation-and-Access"><span>Tree Navigation and Access</span></a></li><li><a class="tocitem" href="#Working-with-Data"><span>Working with Data</span></a></li><li><a class="tocitem" href="#File-I/O-Operations"><span>File I/O Operations</span></a></li><li><a class="tocitem" href="#Visualization"><span>Visualization</span></a></li><li><a class="tocitem" href="#Advanced-Features"><span>Advanced Features</span></a></li></ul></li><li><a class="tocitem" href="../release_notes/">Release Notes</a></li><li><span class="tocitem">Examples</span><ul><li><a class="tocitem" href="../examples/">Sentinel-3 zarr products</a></li></ul></li><li><a class="tocitem" href="../api/">API Reference</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Getting Started</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Getting Started</a></li></ul></nav><div class="docs-right"><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="YAXTrees"><a class="docs-heading-anchor" href="#YAXTrees">YAXTrees</a><a id="YAXTrees-1"></a><a class="docs-heading-anchor-permalink" href="#YAXTrees" title="Permalink"></a></h1><p>The <code>YAXTree</code> module provides a hierarchical data structure for working with nested data arrays and datasets. It&#39;s particularly useful for handling complex data structures like Zarr groups or JSON hierarchies.</p><h2 id="Creating-Trees"><a class="docs-heading-anchor" href="#Creating-Trees">Creating Trees</a><a id="Creating-Trees-1"></a><a class="docs-heading-anchor-permalink" href="#Creating-Trees" title="Permalink"></a></h2><h3 id="Basic-Tree-Creation"><a class="docs-heading-anchor" href="#Basic-Tree-Creation">Basic Tree Creation</a><a id="Basic-Tree-Creation-1"></a><a class="docs-heading-anchor-permalink" href="#Basic-Tree-Creation" title="Permalink"></a></h3><pre><code class="language-julia hljs"># Create an empty root node
+root = YAXTree()
+
+# Create a node with a specific name
+node = YAXTree(&quot;mynode&quot;)
+
+# Create a node with data
+using YAXArrays
+data = YAXArray((Dim{:rows}(1:10),), collect(1:10))
+data_node = YAXTree(&quot;data_node&quot;, data=data)</code></pre><h3 id="Adding-Children"><a class="docs-heading-anchor" href="#Adding-Children">Adding Children</a><a id="Adding-Children-1"></a><a class="docs-heading-anchor-permalink" href="#Adding-Children" title="Permalink"></a></h3><pre><code class="language-julia hljs"># Add children to a tree
+root = YAXTree()
+add_children!(root, &quot;child1&quot;)  # Add empty child
+add_children!(root, &quot;child2&quot;, data)  # Add child with data
+
+# Add nested children using a path
+add_children_full_path!(root, &quot;path/to/deep/child&quot;, data)</code></pre><h2 id="Tree-Navigation-and-Access"><a class="docs-heading-anchor" href="#Tree-Navigation-and-Access">Tree Navigation and Access</a><a id="Tree-Navigation-and-Access-1"></a><a class="docs-heading-anchor-permalink" href="#Tree-Navigation-and-Access" title="Permalink"></a></h2><h3 id="Accessing-Nodes"><a class="docs-heading-anchor" href="#Accessing-Nodes">Accessing Nodes</a><a id="Accessing-Nodes-1"></a><a class="docs-heading-anchor-permalink" href="#Accessing-Nodes" title="Permalink"></a></h3><pre><code class="language-julia hljs"># Access children using property syntax
+child1 = root.child1
+grandchild = root.child1.grandchild
+
+# Access using string paths
+node = root[&quot;path/to/node&quot;]
+
+# Check if a path exists
+if path_exists(root, &quot;path/to/node&quot;)
+    # Do something
+end</code></pre><h3 id="Iterating-Over-Trees"><a class="docs-heading-anchor" href="#Iterating-Over-Trees">Iterating Over Trees</a><a id="Iterating-Over-Trees-1"></a><a class="docs-heading-anchor-permalink" href="#Iterating-Over-Trees" title="Permalink"></a></h3><pre><code class="language-julia hljs"># Iterate over all nodes in the tree (depth-first)
+for node in root
+    println(node.name)
+end
+
+# Using the map_over_subtrees macro
+function process_node(tree::YAXTree)
+    if !isnothing(tree.data)
+        # Process data
+    end
+end
+
+YAXTrees.@map_over_subtrees process_node root</code></pre><h2 id="Working-with-Data"><a class="docs-heading-anchor" href="#Working-with-Data">Working with Data</a><a id="Working-with-Data-1"></a><a class="docs-heading-anchor-permalink" href="#Working-with-Data" title="Permalink"></a></h2><h3 id="Data-Selection-and-Filtering"><a class="docs-heading-anchor" href="#Data-Selection-and-Filtering">Data Selection and Filtering</a><a id="Data-Selection-and-Filtering-1"></a><a class="docs-heading-anchor-permalink" href="#Data-Selection-and-Filtering" title="Permalink"></a></h3><pre><code class="language-julia hljs"># Filter data based on conditions
+mask = YAXArray((rows, time), rand(Bool, (100, 36)))
+temperature = YAXArray((rows, time), rand(-40:40, (100, 36)))
+
+# Replace values where mask is true with missing
+masked_data = where(mask, temperature, missing)
+
+# Parallel processing for large arrays
+chunked_result = pwhere(mask, temperature, -1, (50, 50))</code></pre><h2 id="File-I/O-Operations"><a class="docs-heading-anchor" href="#File-I/O-Operations">File I/O Operations</a><a id="File-I/O-Operations-1"></a><a class="docs-heading-anchor-permalink" href="#File-I/O-Operations" title="Permalink"></a></h2><h3 id="Opening-Data-Trees"><a class="docs-heading-anchor" href="#Opening-Data-Trees">Opening Data Trees</a><a id="Opening-Data-Trees-1"></a><a class="docs-heading-anchor-permalink" href="#Opening-Data-Trees" title="Permalink"></a></h3><pre><code class="language-julia hljs"># Open from Zarr format
+tree = open_datatree(&quot;data.zarr&quot;)
+
+# Open from zipped Zarr
+tree = open_datatree(&quot;data.zarr.zip&quot;)
+
+# Open from JSON
+tree = open_datatree(&quot;data.json&quot;, :json)
+
+# Open from S3
+tree = open_datatree(&quot;s3://bucket/data.zarr&quot;)</code></pre><h3 id="Writing-to-Zarr"><a class="docs-heading-anchor" href="#Writing-to-Zarr">Writing to Zarr</a><a id="Writing-to-Zarr-1"></a><a class="docs-heading-anchor-permalink" href="#Writing-to-Zarr" title="Permalink"></a></h3><pre><code class="language-julia hljs"># Save tree to Zarr format
+to_zarr(tree, &quot;output.zarr&quot;)</code></pre><h2 id="Visualization"><a class="docs-heading-anchor" href="#Visualization">Visualization</a><a id="Visualization-1"></a><a class="docs-heading-anchor-permalink" href="#Visualization" title="Permalink"></a></h2><h3 id="Display-Tree-Structure"><a class="docs-heading-anchor" href="#Display-Tree-Structure">Display Tree Structure</a><a id="Display-Tree-Structure-1"></a><a class="docs-heading-anchor-permalink" href="#Display-Tree-Structure" title="Permalink"></a></h3><pre><code class="language-julia hljs"># Basic tree display
+show_tree(tree)
+
+# Display with detailed information
+show_tree(tree, details=true)
+
+# Custom display with prefix
+show_tree(tree, &quot;  &quot;, details=true)</code></pre><h2 id="Advanced-Features"><a class="docs-heading-anchor" href="#Advanced-Features">Advanced Features</a><a id="Advanced-Features-1"></a><a class="docs-heading-anchor-permalink" href="#Advanced-Features" title="Permalink"></a></h2><h3 id="Copying-and-Subsetting"><a class="docs-heading-anchor" href="#Copying-and-Subsetting">Copying and Subsetting</a><a id="Copying-and-Subsetting-1"></a><a class="docs-heading-anchor-permalink" href="#Copying-and-Subsetting" title="Permalink"></a></h3><p>The <code>select_vars</code> function provides flexible ways to select and copy parts of your data tree:</p><pre><code class="language-julia hljs"># Basic variable selection
+selected_tree = select_vars(tree, [&quot;temperature&quot;, &quot;pressure&quot;])  # using strings
+selected_tree = select_vars(tree, [:temperature, :pressure])    # using symbols
+
+# Non-exclusive mode (default)
+# - Keeps nodes that have any of the specified variables
+# - Preserves nodes without any of the specified variables
+tree1 = select_vars(root, [&quot;temperature&quot;, &quot;pressure&quot;])
+
+# Exclusive mode
+# Only keeps nodes that have the specified variables
+# Removes nodes that only have different variables
+tree2 = select_vars(root, [&quot;temperature&quot;, &quot;pressure&quot;], exclusive=true)</code></pre><p>Example with different behaviors:</p><pre><code class="language-julia hljs"># Create a test tree with different datasets
+root = YAXTree()
+
+# Dataset with temperature and pressure
+ds1 = Dataset(
+    temperature = YAXArray((Dim{:x}(1:3),), [20.0, 21.0, 22.0]),
+    pressure = YAXArray((Dim{:x}(1:3),), [1000.0, 1001.0, 1002.0]),
+    humidity = YAXArray((Dim{:x}(1:3),), [0.6, 0.7, 0.8])
+)
+
+# Dataset with only wind_speed
+ds2 = Dataset(
+    wind_speed = YAXArray((Dim{:x}(1:3),), [5.0, 6.0, 7.0])
+)
+
+# Add datasets to tree
+root.data = ds1
+root.child = YAXTree(&quot;child&quot;, data=ds2)
+
+# Non-exclusive selection - keeps both nodes
+selected1 = select_vars(root, [&quot;temperature&quot;])
+@assert path_exists(selected1, &quot;child&quot;) == true  # child node kept
+
+# Exclusive selection - removes child node as it has no selected variables
+selected2 = select_vars(root, [&quot;temperature&quot;], exclusive=true)
+@assert path_exists(selected2, &quot;child&quot;) == false  # child node removed
+
+# Control error handling with datasets
+copied_ds = copy_subset(dataset, [&quot;temperature&quot;, &quot;pressure&quot;],
+                     error=false,    # Don&#39;t error on missing variables
+                     verbose=true)   # Show warning for missing variables
+
+# Remove unwanted variables
+filtered_tree = exclude_vars(tree, [&quot;humidity&quot;, &quot;wind_speed&quot;])
+
+# Advanced filtering example:
+root = YAXTree()
+
+# Create datasets with different variables
+ds_main = Dataset(
+    temperature = YAXArray((Dim{:x}(1:3),), [20.0, 21.0, 22.0]),
+    pressure = YAXArray((Dim{:x}(1:3),), [1000.0, 1001.0, 1002.0]),
+    humidity = YAXArray((Dim{:x}(1:3),), [0.6, 0.7, 0.8])
+)
+
+ds_weather = Dataset(
+    wind_speed = YAXArray((Dim{:x}(1:3),), [5.0, 6.0, 7.0])
+)
+
+# Build tree structure
+root.data = ds_main                     # Add main dataset to root
+root.weather = YAXTree(&quot;weather&quot;, data=ds_weather)  # Add weather node
+
+# Different selection behaviors:
+# 1. Non-exclusive - keeps structure, filters variables where found
+filtered1 = select_vars(root, [&quot;temperature&quot;, &quot;pressure&quot;])
+@assert haskey(filtered1.children, &quot;weather&quot;)  # weather node remains
+
+# 2. Exclusive - only keeps nodes containing selected variables
+filtered2 = select_vars(root, [&quot;temperature&quot;], exclusive=true)
+@assert !haskey(filtered2.children, &quot;weather&quot;)  # weather node removed
+
+# 3. Exclude specific variables
+filtered3 = exclude_vars(root, [&quot;humidity&quot;, &quot;wind_speed&quot;])
+# Result has temperature and pressure, but not humidity or wind_speed</code></pre><h3 id="Excluding-Variables-from-Trees"><a class="docs-heading-anchor" href="#Excluding-Variables-from-Trees">Excluding Variables from Trees</a><a id="Excluding-Variables-from-Trees-1"></a><a class="docs-heading-anchor-permalink" href="#Excluding-Variables-from-Trees" title="Permalink"></a></h3><p>The <code>exclude_vars</code> function provides a way to remove specific variables from datasets in a tree while preserving the tree structure. This is useful when you want to work with a subset of variables by specifying which ones to remove rather than which ones to keep.</p><pre><code class="language-julia hljs"># Basic variable exclusion
+filtered_tree = exclude_vars(tree, [&quot;humidity&quot;, &quot;wind_speed&quot;])  # using strings
+filtered_tree = exclude_vars(tree, [:humidity, :wind_speed])    # using symbols</code></pre><p>Key features of <code>exclude_vars</code>:</p><ol><li><strong>Tree Structure Preservation</strong>: The function maintains the original tree structure, only modifying the dataset contents.</li><li><strong>Nested Dataset Handling</strong>: Variables are excluded from all datasets in the tree, regardless of their location in the hierarchy.</li><li><strong>Variable Type Support</strong>: Works with both String and Symbol variable names.</li><li><strong>Node Cleanup</strong>: If all variables are excluded from a dataset, that node&#39;s data becomes <code>nothing</code>.</li></ol><p>Here&#39;s a comprehensive example:</p><pre><code class="language-julia hljs"># Create a test tree with nested datasets
+root = YAXTree()
+
+# Create main dataset with multiple variables
+main_ds = Dataset(
+    temperature = YAXArray((Dim{:x}(1:3),), [20.0, 21.0, 22.0]),
+    pressure = YAXArray((Dim{:x}(1:3),), [1000.0, 1001.0, 1002.0]),
+    humidity = YAXArray((Dim{:x}(1:3),), [0.6, 0.7, 0.8])
+)
+
+# Create weather dataset with different variables
+weather_ds = Dataset(
+    wind_speed = YAXArray((Dim{:x}(1:3),), [5.0, 6.0, 7.0]),
+    humidity = YAXArray((Dim{:x}(1:3),), [0.5, 0.6, 0.7])
+)
+
+# Build tree structure
+root.data = main_ds
+root.weather = YAXTree(&quot;weather&quot;, data=weather_ds)
+
+# Example 1: Exclude a single variable across all nodes
+filtered = exclude_vars(root, [&quot;humidity&quot;])
+@assert haskey(filtered.data.cubes, :temperature)     # Kept
+@assert haskey(filtered.data.cubes, :pressure)        # Kept
+@assert !haskey(filtered.data.cubes, :humidity)       # Removed
+@assert haskey(filtered.weather.data.cubes, :wind_speed)  # Kept
+@assert !haskey(filtered.weather.data.cubes, :humidity)   # Removed
+
+# Example 2: Exclude multiple variables
+filtered = exclude_vars(root, [&quot;humidity&quot;, &quot;pressure&quot;])
+@assert haskey(filtered.data.cubes, :temperature)      # Kept
+@assert !haskey(filtered.data.cubes, :pressure)        # Removed
+@assert !haskey(filtered.data.cubes, :humidity)        # Removed
+@assert haskey(filtered.weather.data.cubes, :wind_speed)  # Kept
+
+# Example 3: Exclude all variables from a node
+filtered = exclude_vars(root, [&quot;wind_speed&quot;, &quot;humidity&quot;])
+@assert haskey(filtered.data.cubes, :temperature)      # Kept
+@assert haskey(filtered.data.cubes, :pressure)         # Kept
+@assert !haskey(filtered.data.cubes, :humidity)        # Removed
+@assert isnothing(filtered.weather.data)               # Node data cleared as all variables excluded</code></pre><p>Common use cases for <code>exclude_vars</code>:</p><ol><li>Removing unwanted or redundant variables from a dataset</li><li>Creating a lightweight version of a tree by excluding large or unused variables</li><li>Cleaning up intermediate processing variables from results</li><li>Preparing data for export by excluding internal variables</li></ol><p>Notes:</p><ul><li>Non-existent variables are silently ignored</li><li>The function operates on all nodes in the tree simultaneously</li><li>The original tree is not modified; a new tree is returned</li></ul><p>````</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Home</a><a class="docs-footer-nextpage" href="../release_notes/">Release Notes »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.12.0 on <span class="colophon-date" title="Saturday 7 June 2025 07:18">Saturday 7 June 2025</span>. Using Julia version 1.11.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
