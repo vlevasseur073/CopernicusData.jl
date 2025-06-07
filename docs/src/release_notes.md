@@ -14,6 +14,9 @@ pkgversion(CopernicusData) # hide
 ### v0.2.0
 
 * Add `YAXTree` filtering feature based on variable selection. See [`YAXTrees.select_vars`](@ref) and [`YAXTrees.exclude_vars`](@ref)
+* Add `YAXTree` isomorphic check. Two `YAXTree` are isomorphic if they have the exact same tree structure and if the data contained in equivalent node
+is the same type (`YAXArrays.YAXArray` or `YAXArrays.Datasets.Dataset`) and have the same variables and same dimensions. 
+It does not compare the content of the arrays itself. See [`YAXTrees.isomorphic`](@ref)
 * Improve documentation. Use `Makie.jl` for visualization
 
 ### v0.1.0

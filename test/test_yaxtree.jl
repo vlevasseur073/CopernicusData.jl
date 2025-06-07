@@ -535,3 +535,84 @@ end
     @test haskey(filtered.weather.data.cubes, :wind_speed)
     @test haskey(filtered.weather.data.cubes, :humidity)
 end
+
+@testset "Testing isomorphic functionality" begin
+    using YAXArrays
+    
+    # Create test trees with identical structure but different names
+    tree1 = YAXTree("root1")
+    tree2 = YAXTree("root2")
+    
+    # Test empty trees are isomorphic
+    @test isomorphic(tree1, tree2)
+    
+    # Add identical structure with different node names
+    tree1.childA = YAXTree("childA")
+    tree2.childA = YAXTree("childA")
+    @test isomorphic(tree1, tree2)
+    
+    # Add nested structure
+    tree1.childA.grandchild = YAXTree("grandchild")
+    tree2.childA.grandchild = YAXTree("grandchild")
+    @test isomorphic(tree1, tree2)
+    
+    # Test with different structures
+    tree3 = YAXTree("root3")
+    tree3.childB = YAXTree("childB")
+    @test !isomorphic(tree1, tree3)
+    
+    # Test with data
+    ds1 = Dataset(
+        temperature = YAXArray((Dim{:x}(1:3),), [20.0, 21.0, 22.0]),
+        pressure = YAXArray((Dim{:x}(1:3),), [1000.0, 1001.0, 1002.0])
+    )
+    ds2 = Dataset(
+        temperature = YAXArray((Dim{:x}(1:3),), [25.0, 26.0, 27.0]),
+        pressure = YAXArray((Dim{:x}(1:3),), [1010.0, 1011.0, 1012.0])
+    )
+    
+    # Same structure and variables, different values
+    tree1.data = ds1
+    tree2.data = ds2
+    @test isomorphic(tree1, tree2)
+    
+    # Different variables
+    ds3 = Dataset(
+        temperature = YAXArray((Dim{:x}(1:3),), [20.0, 21.0, 22.0]),
+        humidity = YAXArray((Dim{:x}(1:3),), [0.6, 0.7, 0.8])  # Different variable
+    )
+    tree2.data = ds3
+    @test !isomorphic(tree1, tree2)
+    
+    # Test with different dimensions
+    ds4 = Dataset(
+        temperature = YAXArray((Dim{:y}(1:3),), [20.0, 21.0, 22.0]),  # Different dimension name
+        pressure = YAXArray((Dim{:y}(1:3),), [1000.0, 1001.0, 1002.0])
+    )
+    tree3.data = ds1
+    tree4 = YAXTree("root4")
+    tree4.data = ds4
+    @test !isomorphic(tree1, tree4)
+    
+    # Test with YAXArrays
+    array_tree1 = YAXTree("array1")
+    array_tree2 = YAXTree("array2")
+    
+    array1 = YAXArray((Dim{:x}(1:3), Dim{:y}(1:2)), rand(3,2))
+    array2 = YAXArray((Dim{:x}(1:3), Dim{:y}(1:2)), rand(3,2))
+    
+    array_tree1.data = array1
+    array_tree2.data = array2
+    @test isomorphic(array_tree1, array_tree2)
+    
+    # Different dimensions in YAXArrays
+    array3 = YAXArray((Dim{:x}(1:3), Dim{:time}(1:2)), rand(3,2))  # Different dimension name
+    array_tree3 = YAXTree("array3")
+    array_tree3.data = array3
+    @test !isomorphic(array_tree1, array_tree3)
+    
+    # Test mixing YAXArray and Dataset
+    mixed_tree = YAXTree("mixed")
+    mixed_tree.data = array1
+    @test !isomorphic(tree1, mixed_tree)  # One has Dataset, other has YAXArray
+end

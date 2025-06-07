@@ -1,7 +1,7 @@
 module YAXTrees
 
 export YAXTree, open_datatree, map_over_subtrees, add_children!, add_children_full_path!,
-       select_vars, exclude_vars, show_tree, to_zarr, path_exists
+       select_vars, exclude_vars, show_tree, to_zarr, path_exists, isomorphic
 
 using YAXArrays, Zarr
 using Dagger
@@ -1060,5 +1060,67 @@ function exclude_vars(
 
     return new_tree
 end
+
+"""
+    isomorphic(tree1::YAXTree, tree2::YAXTree)::Bool
+Check if two YAXTree structures are isomorphic.
+Two `YAXTree` are isomorphic if they have the exact same tree structure and if the data contained in equivalent node
+is the same type (`YAXArrays.YAXArray` or `YAXArrays.Datasets.Dataset`) and have the same variables and same dimensions. 
+# Arguments
+- `tree1::YAXTree`: The first tree to compare
+- `tree2::YAXTree`: The second tree to compare
+# Returns
+- `Bool`: `true` if the trees are isomorphic, `false` otherwise
+# Examples
+```julia
+isomorphic(tree1, tree2)  # Returns true if both trees have the same structure and data
+```
+"""
+function isomorphic(tree1::YAXTree, tree2::YAXTree)::Bool
+    # Check if both nodes have data or both don't have data
+    if (isnothing(tree1.data) && !isnothing(tree2.data)) || (!isnothing(tree1.data) && isnothing(tree2.data))
+        return false
+    end
+    
+    # If both have data, check variables and dimensions match
+    if !isnothing(tree1.data) && !isnothing(tree2.data)
+        # For Datasets, compare the variable names and their dimensions
+        if isa(tree1.data, YAXArrays.Datasets.Dataset) && isa(tree2.data, YAXArrays.Datasets.Dataset)
+            vars1 = sort(collect(keys(tree1.data.cubes)))
+            vars2 = sort(collect(keys(tree2.data.cubes)))
+            if vars1 != vars2 || tree1.data.axes != tree2.data.axes
+                return false
+            end
+            
+        # For YAXArrays, compare their dimensions
+        elseif isa(tree1.data, YAXArray) && isa(tree2.data, YAXArray)
+            if tree1.data.axes != tree2.data.axes
+                return false
+            end
+        # Different types of data
+        else
+            return false
+        end
+    end
+    
+    # Get sorted child names for both trees
+    children1 = sort(collect(keys(tree1.children)))
+    children2 = sort(collect(keys(tree2.children)))
+    
+    # Check if they have the same number and names of children
+    if children1 != children2
+        return false
+    end
+    
+    # Recursively check all children
+    for child_name in children1
+        if !isomorphic(tree1.children[child_name], tree2.children[child_name])
+            return false
+        end
+    end
+    
+    return true
+end
+
 
 end # module YAXTree
