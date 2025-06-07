@@ -38,8 +38,29 @@ The underlying data is a `CFDiskArray`
 
 ### Plot data
 
+We use `Makie.jl` to plot the data.
+
 ```@example env
-heatmap(rad.data, title=rad.properties["long_name"]) # hide
+lat=efr.measurements.latitude.data
+lon=efr.measurements.longitude.data
+val=replace(rad.data, missing => 0.0)
+
+step=10 # hide
+lon=lon[1:step:end,1:step:end] # hide
+lat=lat[1:step:end,1:step:end] # hide
+val=val[1:step:end,1:step:end] # hide
+min,max = minimum(val), maximum(val)
+
+fig=Figure(size=(1200,600))
+ax1=Axis(fig[1, 1], title=rad.properties["long_name"],
+     xlabel="Longitude", ylabel="Latitude")
+s=surface!(ax1,lon, lat, zeros(size(lon));
+     color=val,colorrange=(min,max),colormap=:rainbow, shading=NoShading)
+     Colorbar(fig[1, 2], s)
+ax2=Axis(fig[1, 3], title=rad.properties["long_name"],
+     xlabel="Columns", ylabel="Rows")
+heatmap!(ax2, val, colormap=:rainbow, colorrange=(min,max))
+fig
 ```
 
 ### Open meteorological conditions
@@ -50,7 +71,11 @@ meteo = efr.conditions.meteorology
 ### Interpolate the atmospheric temperature at p=832.2 hPa
 ```@example env
 tp = linear_interpolation(meteo, "atmospheric_temperature_profile", dims="pressure_level", value=832.2)
-heatmap(tp.data, title="pressure_level=832.2 hPa")
+fig=Figure(size=(800,600))
+ax=Axis(fig[1, 1], title="atmospheric_temperature_profile @ 832.2 hPa",
+     xlabel="tp_columns", ylabel="tp_rows")
+heatmap!(ax,tp.data)
+fig
 ```
 
 ## SLSTR Level-2 FRP
@@ -61,7 +86,7 @@ frp_path # hide
 ```
 
 ```@example env
-local_path = joinpath(tempdir(),OLCEFR)
+local_path = joinpath(tempdir(),SLSFRP)
 Downloads.download(frp_path, local_path)
 frp = open_datatree(local_path)
 frp
@@ -82,7 +107,7 @@ meas
 using CairoMakie, GeoMakie
 
 frp_vals = Int64.(round.(frp.measurements.inadir.frp_mwir.data))
-fig = Figure()
+fig = Figure(size=(800,600))
 ax = GeoAxis(fig[1,1]; dest = "+proj=merc")
 GeoMakie.xlims!(ax, -125, -114)
 GeoMakie.ylims!(ax, 40, 50)

@@ -386,3 +386,152 @@ end
     # Clean up
     rm(zarr_path, recursive=true)
 end
+
+@testset "Testing path_exists" begin
+    # Create a test tree
+    root = YAXTree()
+    root.childA = YAXTree("childA")
+    root.childB = YAXTree("childB")
+    root.childA.grandchild = YAXTree("grandchild")
+    
+    # Test existing paths
+    @test path_exists(root, "childA")
+    @test path_exists(root, "childB")
+    @test path_exists(root, "childA/grandchild")
+    
+    # Test non-existing paths
+    @test !path_exists(root, "childC")
+    @test !path_exists(root, "childA/nonexistent")
+    @test !path_exists(root, "childB/grandchild")
+    
+    # Test empty path (should return true as it represents the root)
+    @test path_exists(root, "")
+    
+    # Test path with multiple slashes
+    @test path_exists(root, "childA//grandchild")
+    @test path_exists(root, "/childA/grandchild/")
+end
+
+@testset "Testing select_vars" begin
+    # Create a test tree with datasets
+    root = YAXTree()
+    
+    # Create test datasets
+    ds1 = Dataset(
+        temperature = YAXArray((Dim{:x}(1:3),), [20.0, 21.0, 22.0]),
+        pressure = YAXArray((Dim{:x}(1:3),), [1000.0, 1001.0, 1002.0]),
+        humidity = YAXArray((Dim{:x}(1:3),), [0.6, 0.7, 0.8])
+        )
+        
+        ds2 = Dataset(
+            temperature = YAXArray((Dim{:x}(1:3),), [25.0, 26.0, 27.0]),
+            wind_speed = YAXArray((Dim{:x}(1:3),), [5.0, 6.0, 7.0])
+            )
+            
+        ds3 = Dataset(
+            humidity = YAXArray((Dim{:x}(1:3),), [0.6, 0.7, 0.8]),
+            wind_speed = YAXArray((Dim{:x}(1:3),), [5.0, 6.0, 7.0])
+    )
+    
+    # Add datasets to tree
+    root.data = ds1
+    root.childA = YAXTree("childA", data=ds2)
+    root.childB = YAXTree("childB", data=ds3)
+    
+    # Test selecting existing variables
+    selected_tree = select_vars(root, ["temperature", "pressure"])
+    @test haskey(selected_tree.data.cubes, :temperature)
+    @test haskey(selected_tree.data.cubes, :pressure)
+    @test !haskey(selected_tree.data.cubes, :humidity)
+    @test path_exists(selected_tree, "childB") == true
+    @test haskey(selected_tree.childB.data.cubes, :humidity)
+    @test haskey(selected_tree.childB.data.cubes, :wind_speed)
+    
+    # Test selecting variables with Symbol array
+    selected_tree = select_vars(root, [:temperature, :pressure])
+    @test haskey(selected_tree.data.cubes, :temperature)
+    @test haskey(selected_tree.data.cubes, :pressure)
+    
+    # Test exclusive mode
+    selected_tree = select_vars(root, ["temperature"], exclusive=true)
+    @test haskey(selected_tree.data.cubes, :temperature)
+    @test !haskey(selected_tree.data.cubes, :pressure)
+    @test !haskey(selected_tree.data.cubes, :humidity)
+    @test path_exists(selected_tree, "childB") == false
+    
+    # Test selecting non-existent variables (should keep original data when not exclusive)
+    selected_tree = select_vars(root, ["nonexistent"])
+    @test !isnothing(selected_tree.data)
+    @test haskey(selected_tree.data.cubes, :temperature)
+    
+    # Test selecting non-existent variables in exclusive mode
+    selected_tree = select_vars(root, ["nonexistent"], exclusive=true)
+    @test path_exists(selected_tree, "childA") == false
+    @test path_exists(selected_tree, "childB") == false
+    @test isnothing(selected_tree.data)
+end
+
+@testset "Testing exclude_vars functionality" begin
+    # Create a test tree with nested datasets
+    root = YAXTree()
+    
+    # Create datasets with test data
+    main_ds = Dataset(
+        temperature = YAXArray((Dim{:x}(1:3),), [20.0, 21.0, 22.0]),
+        pressure = YAXArray((Dim{:x}(1:3),), [1000.0, 1001.0, 1002.0]),
+        humidity = YAXArray((Dim{:x}(1:3),), [0.6, 0.7, 0.8])
+    )
+    
+    weather_ds = Dataset(
+        wind_speed = YAXArray((Dim{:x}(1:3),), [5.0, 6.0, 7.0]),
+        humidity = YAXArray((Dim{:x}(1:3),), [0.5, 0.6, 0.7])
+    )
+    
+    # Build tree structure
+    root.data = main_ds
+    root.weather = YAXTree("weather", data=weather_ds)
+    
+    # Test excluding a single variable
+    filtered = exclude_vars(root, ["humidity"])
+    @test haskey(filtered.data.cubes, :temperature)
+    @test haskey(filtered.data.cubes, :pressure)
+    @test !haskey(filtered.data.cubes, :humidity)
+    @test haskey(filtered.weather.data.cubes, :wind_speed)
+    @test !haskey(filtered.weather.data.cubes, :humidity)
+    
+    # Test excluding multiple variables
+    filtered = exclude_vars(root, ["humidity", "pressure"])
+    @test haskey(filtered.data.cubes, :temperature)
+    @test !haskey(filtered.data.cubes, :pressure)
+    @test !haskey(filtered.data.cubes, :humidity)
+    @test haskey(filtered.weather.data.cubes, :wind_speed)
+    @test !haskey(filtered.weather.data.cubes, :humidity)
+    
+    # Test excluding all variables from a node
+    filtered = exclude_vars(root, ["wind_speed", "humidity"])
+    @test haskey(filtered.data.cubes, :temperature)
+    @test haskey(filtered.data.cubes, :pressure)
+    @test !haskey(filtered.data.cubes, :humidity)
+    @test isnothing(filtered.weather.data)  # Node should have no data when all variables are excluded
+    
+    # Test excluding all variables from a node
+    filtered = exclude_vars(root, ["wind_speed", "humidity"], drop=true)
+    @test haskey(filtered.data.cubes, :temperature)
+    @test haskey(filtered.data.cubes, :pressure)
+    @test !haskey(filtered.data.cubes, :humidity)
+    @test isempty(filtered.children)  # Node is fully removed
+
+    # Test with symbol input
+    filtered = exclude_vars(root, [:humidity, :pressure])
+    @test haskey(filtered.data.cubes, :temperature)
+    @test !haskey(filtered.data.cubes, :pressure)
+    @test !haskey(filtered.data.cubes, :humidity)
+    
+    # Test excluding non-existent variables
+    filtered = exclude_vars(root, ["non_existent"])
+    @test haskey(filtered.data.cubes, :temperature)
+    @test haskey(filtered.data.cubes, :pressure)
+    @test haskey(filtered.data.cubes, :humidity)
+    @test haskey(filtered.weather.data.cubes, :wind_speed)
+    @test haskey(filtered.weather.data.cubes, :humidity)
+end

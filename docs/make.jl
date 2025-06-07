@@ -10,6 +10,7 @@ makedocs(
     pages = [
         "quickstart.md",
         "Home" => "index.md",
+        "Getting Started" => "getting_started.md",
         "Release Notes" => "release_notes.md",
         "Examples" => Any[
             "Sentinel-3 zarr products" =>"examples.md"

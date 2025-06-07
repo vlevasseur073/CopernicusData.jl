@@ -1,6 +1,7 @@
 module YAXTrees
 
-export YAXTree, open_datatree, map_over_subtrees, add_children!
+export YAXTree, open_datatree, map_over_subtrees, add_children!, add_children_full_path!,
+       select_vars, exclude_vars, show_tree, to_zarr, path_exists
 
 using YAXArrays, Zarr
 using Dagger
@@ -10,6 +11,19 @@ using Mmap
 import ..CopernicusData: get_AWS_config, s3_get_object, NotImplementedError
 
 
+"""
+    YAXTree
+
+A tree data structure for representing hierarchical data with optional data arrays.
+
+# Fields
+- `name::String`: The name of the node
+- `path::String`: The full path to this node in the tree
+- `properties::Dict{String, Any}`: Additional properties/metadata for the node
+- `parent::Union{Nothing, YAXTree}`: Reference to parent node, or nothing for root
+- `children::Dict{String, YAXTree}`: Dictionary of child nodes
+- `data::Union{Nothing, YAXArray, YAXArrays.Datasets.Dataset}`: Optional data associated with the node
+"""
 mutable struct YAXTree
     name::String
     path::String
@@ -19,8 +33,88 @@ mutable struct YAXTree
     data::Union{Nothing, YAXArray, YAXArrays.Datasets.Dataset}
 end
 
+"""
+    getindex(tree::YAXTree, path::String)::YAXTree
+
+Access a node in the tree using a path string, where path components are separated by "/".
+
+# Arguments
+- `tree::YAXTree`: The tree to search in
+- `path::String`: Path to the desired node, components separated by "/"
+
+# Returns
+- `YAXTree`: The node at the specified path
+
+# Throws
+- `KeyError`: If any component of the path does not exist in the tree
+
+# Examples
+```julia
+node = tree["data/temperature/daily"]  # Get node at path "data/temperature/daily"
+```
+"""
 function Base.getindex(tree::YAXTree,path::String)::YAXTree
-    return tree.children[path]
+    # Handle empty path
+    if isempty(path)
+        return tree
+    end
+    
+    # Split path into components
+    parts = split(path, "/")
+    deleteat!(parts, findall(x-> isempty(x) || x==".", parts))
+    current = tree
+    
+    # Traverse the tree following each path component
+    for part in parts
+        if haskey(current.children, part)
+            current = current.children[part]
+        else
+            throw(KeyError("Path component '$part' not found in tree at '$(current.path)'"))
+        end
+    end
+    
+    return current
+end
+
+"""
+    path_exists(tree::YAXTree, path::String)::Bool
+
+Check if a path exists in the tree.
+
+# Arguments
+- `tree::YAXTree`: The tree to search in
+- `path::String`: Path to check, components separated by "/"
+
+# Returns
+- `Bool`: true if path exists, false otherwise
+
+# Examples
+```julia
+if is_path_exists(tree, "data/temperature/daily")
+    node = tree["data/temperature/daily"]
+end
+```
+"""
+function path_exists(tree::YAXTree, path::String)::Bool
+    # Handle empty path
+    if isempty(path)
+        return true
+    end
+    
+    # Split path into components
+    parts = split(path, "/")
+    deleteat!(parts, findall(x-> isempty(x) || x==".", parts))
+    current = tree
+    
+    # Traverse the tree following each path component
+    for part in parts
+        if !haskey(current.children, part)
+            return false
+        end
+        current = current.children[part]
+    end
+    
+    return true
 end
 
 function Base.getproperty(tree::YAXTree, name::Symbol)
@@ -58,10 +152,31 @@ function Base.setproperty!(tree::YAXTree, name::Symbol, value)
     end
 end
 
+"""
+    YAXTree()
+
+Create a new empty YAXTree with default root node.
+
+# Returns
+- `YAXTree`: A new tree with root node named "root"
+"""
 function YAXTree()
     YAXTree("root",".",Dict(),nothing,Dict(),nothing)
 end
 
+"""
+    YAXTree(name::String; parent=nothing, data=nothing)
+
+Create a new YAXTree node with the specified name and optional parent and data.
+
+# Arguments
+- `name::String`: The name of the node
+- `parent=nothing`: Optional parent node
+- `data=nothing`: Optional data to associate with the node
+
+# Returns
+- `YAXTree`: A new tree node
+"""
 function YAXTree(name::String;parent=nothing,data=nothing)
     path=""
     properties=Dict()
@@ -71,6 +186,17 @@ function YAXTree(name::String;parent=nothing,data=nothing)
     YAXTree(name,path,properties,parent,children,data)
 end
 
+"""
+    YAXTree(zgroup::ZGroup)
+
+Create a YAXTree from a Zarr group structure.
+
+# Arguments
+- `zgroup::ZGroup`: The Zarr group to convert to a tree
+
+# Returns
+- `YAXTree`: A new tree representing the Zarr group hierarchy
+"""
 function YAXTree(zgroup::ZGroup)
     tree = YAXTree()
     iter_groups!(tree,zgroup)
@@ -78,6 +204,25 @@ function YAXTree(zgroup::ZGroup)
     return tree
 end
 
+"""
+    add_children!(tree::YAXTree, name::Union{String,Symbol}, data::Union{Nothing, YAXArray, YAXArrays.Datasets.Dataset}=nothing)
+
+Add a child node to the tree with the given name and optional data.
+
+# Arguments
+- `tree::YAXTree`: The parent tree node
+- `name::Union{String,Symbol}`: Name of the new child node (must not contain '/')
+- `data::Union{Nothing, YAXArray, YAXArrays.Datasets.Dataset}=nothing`: Optional data to associate with the node
+
+# Throws
+- `ArgumentError`: If the name contains '/' or if a child with the same name already exists
+
+# Examples
+```julia
+add_children!(tree, "temperature", temperature_data)
+add_children!(tree, :pressure)  # Add empty node
+```
+"""
 function add_children!(tree::YAXTree,name::Union{String,Symbol},data::Union{Nothing, YAXArray, YAXArrays.Datasets.Dataset}=nothing)
     if length(split(name,"/")) > 1
         @error "The name of a tree node could not contains '/' " name
@@ -98,12 +243,34 @@ function add_children!(tree::YAXTree,name::Union{String,Symbol},data::Union{Noth
     current.children[name] = YAXTree(name, joinpath(current.path,name), properties, current, Dict(), data)
 end
 
-function add_children_full_path!(tree::YAXTree, path::String, data::YAXArray)
+"""
+    add_children_full_path!(tree::YAXTree, path::String, data::Union{Nothing, YAXArray, YAXArrays.Datasets.Dataset}=nothing)
+
+Add nodes to the tree following a full path, creating intermediate nodes as needed.
+
+# Arguments
+- `tree::YAXTree`: The root tree node
+- `path::String`: Full path of nodes to create, components separated by "/"
+- `data::Union{Nothing, YAXArray, YAXArrays.Datasets.Dataset}=nothing`: Optional data to associate with the leaf node
+
+# Examples
+```julia
+# Creates nodes "data", "temperature", and "daily" if they don't exist
+add_children_full_path!(tree, "data/temperature/daily", temp_data)
+```
+"""
+function add_children_full_path!(tree::YAXTree, path::String, data::Union{Nothing, YAXArray, YAXArrays.Datasets.Dataset}=nothing)
     parts = split(path,"/")
+    deleteat!(parts, findall(x-> isempty(x) || x==".", parts))
     current = tree
+    if isnothing(data)
+        properties=Dict()
+    else
+        properties = data.properties
+    end
     for p in parts
         if !haskey(current.children,p)
-            current.children[p] = YAXTree(p, joinpath(current.path,p), data.properties, current, Dict(), data)
+            current.children[p] = YAXTree(p, joinpath(current.path,p), properties, current, Dict(), data)
         end
         current = current.children[p]
     end
@@ -112,13 +279,33 @@ end
 """
     open_datatree(path::String, driver::Union{Nothing,Symbol}=nothing; name::String="root")::YAXTree
 
-Open a Copernicus product
-returns YAXTree
+Open a data product and create a YAXTree representation of its structure. The driver is automatically detected from the file extension
+or can be specified manually.
 
+# Arguments
+- `path::String`: Path to the data product, can be local file/directory or S3 URL
+- `driver::Union{Nothing,Symbol}=nothing`: Optional driver specification. Supported values:
+  - `:zarr`: For Zarr format files/directories
+  - `:sen3`: For Sentinel-3 SEN3 format
+  - `:json`: For JSON files
+- `name::String="root"`: Name for the root node of the tree
+
+# Returns
+- `YAXTree`: A tree representation of the data product structure
+
+# Throws
+- `Exception`: If the file doesn't exist or the driver is not supported
 
 # Examples
-```julia-repl
-julia> dt = open_datatree("S03SLSLST_20191227T124111_0179_A109_T921.zarr")
+```julia
+# Auto-detect driver from extension
+dt = open_datatree("S03SLSLST_20191227T124111_0179_A109_T921.zarr")
+
+# Explicitly specify driver
+dt = open_datatree("data.SEN3", :sen3)
+
+# Open from S3
+dt = open_datatree("s3://bucket/path/data.zarr")
 ```
 """
 function open_datatree(path::String, driver::Union{Nothing,Symbol}=nothing;name::String="root")::YAXTree
@@ -209,6 +396,35 @@ function iter_groups!(tree::YAXTree, z::ZGroup; remove_zarr_path=false)
 end
 
 
+"""
+    open_zarr_datatree(path::String; name::String="root", archive::Bool=false)::YAXTree
+
+Open a Zarr format file/directory and create a YAXTree representation. Supports both local and S3 paths, and
+optionally handles ZIP archives containing Zarr data.
+
+# Arguments
+- `path::String`: Path to Zarr file/directory, can be local or S3 URL
+- `name::String="root"`: Name for the root node of the tree
+- `archive::Bool=false`: Set to true if path points to a ZIP archive containing Zarr data
+
+# Returns
+- `YAXTree`: A tree representation of the Zarr data structure
+
+# Throws
+- `Exception`: If the file/directory doesn't exist
+
+# Examples
+```julia
+# Open local Zarr directory
+tree = open_zarr_datatree("data.zarr")
+
+# Open Zarr from ZIP archive
+tree = open_zarr_datatree("data.zarr.zip", archive=true)
+
+# Open from S3
+tree = open_zarr_datatree("s3://bucket/data.zarr")
+```
+"""
 function open_zarr_datatree(path::String;name::String="root", archive::Bool=false)::YAXTree
     # Check path exist
     if !startswith(path,"s3://") && !isdir(path) && (!isfile(path) || !archive)
@@ -394,6 +610,12 @@ YAXTrees.@map_over_subtrees f my_tree
 """
 macro map_over_subtrees(func, tree)
     quote
+        # Check if there is data in the root node
+        data = $(esc(tree)).data
+        if !isnothing(data)
+            $(esc(func))($(esc(tree)))
+        end
+        # Iterate over all nodes in the tree
         for node in $(esc(tree))
             if !isnothing(node.data)
                 $(esc(func))(node)
@@ -437,6 +659,25 @@ function to_zarr(tree::YAXTree, path::String; compressor=Zarr.BloscCompressor())
     @map_over_subtrees yax_to_zarr tree
 end
 
+"""
+    where(cond::YAXArray{Bool}, val1, val2)::YAXArray
+
+Element-wise conditional selection between two values based on a boolean condition array.
+
+# Arguments
+- `cond::YAXArray{Bool}`: Boolean condition array
+- `val1`: Value to select when condition is true
+- `val2`: Value to select when condition is false
+
+# Returns
+- `YAXArray`: Array where each element is val1 where cond is true, val2 otherwise
+
+# Examples
+```julia
+# Create array with values from a where condition is true, b otherwise
+result = where(condition_array, a, b)
+```
+"""
 function where(cond::YAXArray{Bool}, val1, val2)::YAXArray
     function apply_where(c, v1, v2)
         return c ? v1 : v2
@@ -449,6 +690,26 @@ function where(cond::YAXArray{Union{Missing,Bool}}, val1, val2)::YAXArray
     return where(coalesce.(cond,false), val1, val2)
 end
 
+"""
+    pwhere(cond::YAXArray{Bool}, val1, val2, chunks)
+
+Parallel version of `where` that operates on chunked arrays for improved performance with large datasets.
+
+# Arguments
+- `cond::YAXArray{Bool}`: Boolean condition array
+- `val1`: Value to select when condition is true
+- `val2`: Value to select when condition is false
+- `chunks`: Chunk specification for parallel processing
+
+# Returns
+- `YAXArray`: Chunked array where each element is val1 where cond is true, val2 otherwise
+
+# Examples
+```julia
+# Process large array in parallel chunks
+result = pwhere(large_condition, a, b, (1000, 1000))
+```
+"""
 function pwhere(cond::YAXArray{Bool}, val1, val2, chunks)#::Blocks)
     apply_where(c, v1, v2) = c ? v1 : v2
     
@@ -479,6 +740,22 @@ function pwhere(cond::DArray, val1, val2)
     return fetch(res)
 end
 
+"""
+    show_tree(tree::YAXTree, prefix::String = ""; details::Bool=false)
+
+Display a tree structure in a hierarchical format with optional detailed information.
+
+# Arguments
+- `tree::YAXTree`: The tree to display
+- `prefix::String=""`: Prefix string for indentation
+- `details::Bool=false`: Whether to show detailed information about data nodes
+
+# Examples
+```julia
+show_tree(my_tree)  # Basic display
+show_tree(my_tree, details=true)  # Show with data details
+```
+"""
 function show_tree(tree::YAXTree, prefix::String = ""; details=false)
     println(prefix * "📂 " * tree.name)
 
@@ -510,6 +787,23 @@ function show_tree(tree::YAXTree, prefix::String = ""; details=false)
     end
 end
 
+"""
+    show_tree(io::IO, tree::YAXTree, prefix::String = ""; details::Bool = false)
+
+Display a tree structure to an IO stream in a hierarchical format with optional detailed information.
+
+# Arguments
+- `io::IO`: The IO stream to write to
+- `tree::YAXTree`: The tree to display
+- `prefix::String=""`: Prefix string for indentation
+- `details::Bool=false`: Whether to show detailed information about data nodes
+
+# Examples
+```julia
+buf = IOBuffer()
+show_tree(buf, my_tree, details=true)
+```
+"""
 function show_tree(io::IO, tree::YAXTree, prefix::String = ""; details::Bool = false)
     println(io, prefix * "📂 " * tree.name)
     
@@ -583,5 +877,188 @@ end
 #     gplot(g, nodelabel = node_labels)
 # end
 
+function remove_subset(
+    x::YAXArrays.Datasets.Dataset,
+    varnames::Vector{T};
+    )::Union{YAXArrays.Datasets.Dataset, Nothing} where T <: Union{String,Symbol}
+    available_vars = collect(keys(x.cubes))
+    if T == String
+        available_vars = string.(available_vars)
+    end
+    selected_vars = filter(v -> !(v in varnames), available_vars)
+
+    if isempty(selected_vars)
+        return nothing
+    else
+        return x[selected_vars]
+    end
+end
+
+"""
+    copy_subset(x::YAXArrays.Datasets.Dataset, varnames::Vector{T}; error::Bool=false, verbose::Bool=true)::YAXArrays.Datasets.Dataset
+Create a copy of a dataset containing only the specified variables.
+# Arguments
+- `x::YAXArrays.Datasets.Dataset`: The source dataset to copy from
+- `varnames::Vector{T}`: List of variable names to include in the copy, where `T` is either `String` or `Symbol`
+# Keyword Arguments
+- `error::Bool=false`: If true, raises an error if any variable in `varnames` is not present in the dataset
+- `verbose::Bool=true`: If true, logs warnings for variables that are not found in the dataset
+# Returns
+- `YAXArrays.Datasets.Dataset`: A new dataset containing only the specified variables
+# Examples
+```julia
+new_dataset = copy_subset(original_dataset, ["temperature", "pressure"])
+# or
+new_dataset = copy_subset(original_dataset, [:temperature, :pressure])
+```
+"""
+function copy_subset(
+    x::YAXArrays.Datasets.Dataset,
+    varnames::Vector{T};
+    error::Bool = false,
+    verbose::Bool = true
+    )::YAXArrays.Datasets.Dataset where T <: Union{String,Symbol}
+    selected_vars = varnames
+    if !error
+        # Get the intersection of available and requested variables
+        available_vars = collect(keys(x.cubes))
+        if T == String
+            available_vars = string.(available_vars)
+        end
+        selected_vars = filter(v -> v in available_vars, varnames)
+        @debug selected_vars
+        if !issubset(varnames, available_vars) && verbose
+            @warn "Some variables in varnames are not present in the dataset: $(setdiff(varnames, available_vars))"
+            @warn "It will be ignored."
+        end
+    end
+
+    if isempty(selected_vars)
+        return x
+    else
+        # Create a new dataset with only the selected variables
+        # Note: Based on Dataset implementation, this raises a KeyError if the variable is not present
+        return x[selected_vars]
+    end
+end
+
+"""
+    select_vars(tree::YAXTree, varnames::Vector{T})::YAXTree where T <: Union{String,Symbol}
+
+Create a new YAXTree containing only the specified variables.
+
+# Arguments
+- `tree::YAXTree`: The source tree
+- `varnames::Vector{String}` or `Vector{Symbol}`: List of variable names to select
+# Keyword Arguments
+- `exclusive::Bool=false`: If true, only include the specified variables and remove all others. 
+In the case when a node has only variable different from the specified ones, the node is removed.
+If false, keep only the specified variables from nodes which contains all or some of them, but do not
+affect nodes that do not contain any of the specified variables.
+
+# Returns
+- `YAXTree`: A new tree containing only the selected variables
+
+# Examples
+```julia
+new_tree = select_vars(tree, ["temperature", "pressure"])
+# or
+new_tree = select_vars(tree, [:temperature, :pressure])
+```
+"""
+function select_vars(
+    tree::YAXTree,
+    varnames::Vector{T};
+    exclusive=false
+    )::YAXTree where T <: Union{String,Symbol}
+    # Create a new root node
+    new_tree = YAXTree(tree.name, tree.path, copy(tree.properties), nothing, Dict(), nothing)
+    
+    function select_vars_from_node(node::YAXTree)
+        # If the node has data, filter it
+        if !isnothing(node.data) && (!path_exists(new_tree,node.path) || node.path == tree.path)
+            @debug node.name, node.path
+            if isa(node.data, YAXArrays.Datasets.Dataset)
+                new_data::Union{Nothing, YAXArrays.Datasets.Dataset} = nothing
+                try
+                    new_data = copy_subset(node.data, varnames;error=true,verbose=false)
+                catch e
+                    if isa(e, KeyError)
+                        tmp_data = copy_subset(node.data, varnames;error=false,verbose=false)
+                        
+                        var_list_ref = collect(keys(node.data.cubes))
+                        var_list = collect(keys(tmp_data.cubes))
+                        
+                        if var_list_ref == var_list && exclusive # No selection and exclusive is true: remove the node
+                            return
+                        else
+                            new_data = tmp_data
+                        end
+                    else
+                        @show e
+                        @error "Error copying subset for node $(node.path): $e"
+                        return
+                    end
+                end
+                if node.path == tree.path # when there is data in the root node
+                    new_tree.data = new_data
+                else
+                    add_children_full_path!(new_tree, node.path, new_data)
+                end
+            end
+        end
+    end
+    @map_over_subtrees select_vars_from_node tree
+    return new_tree
+end
+
+"""
+    exclude_vars(tree::YAXTree, varnames::Vector{T}; drop::Bool=false)::YAXTree where T <: Union{String,Symbol}
+Create a new YAXTree excluding the specified variables.
+# Arguments
+- `tree::YAXTree`: The source tree
+- `varnames::Vector{String}` or `Vector{Symbol}`: List of variable names to exclude
+# Keyword Arguments
+- `drop::Bool=false`: If true, remove nodes that do not contain any of the specified variables.
+If false, keep nodes even with empty dataset, to preserve the tree structure
+# Returns
+- `YAXTree`: A new tree excluding the specified variables
+# Examples
+```julia
+new_tree = exclude_vars(tree, ["temperature", "pressure"])
+# or
+new_tree = exclude_vars(tree, [:temperature, :pressure])
+```
+"""
+function exclude_vars(
+    tree::YAXTree,
+    varnames::Vector{T};
+    drop::Bool=false
+    )::YAXTree where T <: Union{String,Symbol}
+    # Create a new root node
+    new_tree = YAXTree(tree.name, tree.path, copy(tree.properties), nothing, Dict(), nothing)
+    
+    function exclude_vars_from_node(node::YAXTree)
+        # If the node has data, filter it
+        if !isnothing(node.data) && (!path_exists(new_tree,node.path) || node.path == tree.path)
+            @debug node.name, node.path
+            if isa(node.data, YAXArrays.Datasets.Dataset)
+                new_data = remove_subset(node.data, varnames)
+                if isnothing(new_data) && drop # If no data left and drop==true, remove the node
+                    return
+                end
+                if node.path == tree.path # when there is data in the root node
+                    new_tree.data = new_data
+                else
+                    add_children_full_path!(new_tree, node.path, new_data)
+                end
+            end
+        end
+    end
+
+    @map_over_subtrees exclude_vars_from_node tree
+
+    return new_tree
+end
 
 end # module YAXTree

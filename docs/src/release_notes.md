@@ -11,6 +11,11 @@ pkgversion(CopernicusData) # hide
 
 ## History
 
+### v0.2.0
+
+* Add `YAXTree` filtering feature based on variable selection. See [`YAXTrees.select_vars`](@ref) and [`YAXTrees.exclude_vars`](@ref)
+* Improve documentation. Use `Makie.jl` for visualization
+
 ### v0.1.0
 
 * Implementation of data structure to hold the new CopernicusData zarr Sentinels products from the Copernicus mission

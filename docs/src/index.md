@@ -13,12 +13,18 @@ include("setup.jl")
 lst_path = joinpath(PRODUCT_PATH, SLSLST)
 local_path = joinpath(tempdir(),SLSLST)
 Downloads.download(lst_path, local_path)
-tree = open_datatree(local_path)
+tree = open_datatree(local_path)             
 ```
 
 ```@example env
-lst_data = reverse(permutedims(tree.measurements.lst.data),dims=1) # hide
-heatmap(lst_data, title="Land Surface Temperature over Brazil (Sentinel-3 A)", c=:rainbow, xlabel="columns", ylabel="rows") # hide
+# lst_data = reverse(permutedims(tree.measurements.lst.data),dims=1) # hide
+lst_data = reverse(tree.measurements.lst.data,dims=2) # hide
+# heatmap(lst_data, title="Land Surface Temperature over Brazil (Sentinel-3 A)", c=:rainbow, xlabel="columns", ylabel="rows") # hide
+fig=Figure(size=(800,600)) # hide
+ax=Axis(fig[1, 1], title="Land Surface Temperature over Brazil (Sentinel-3 A)", # hide
+     xlabel="columns", ylabel="rows") # hide
+heatmap!(ax,lst_data, colormap=:rainbow) # hide
+fig # hide
 ```
 
 ## The Data structure
