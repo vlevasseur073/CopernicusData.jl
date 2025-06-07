@@ -124,6 +124,8 @@ function Base.getproperty(tree::YAXTree, name::Symbol)
         return tree.children[String(name)]
     elseif hasproperty(tree.data, name)
         return getproperty(tree.data,name)
+    elseif tree.data isa Union{YAXArrays.Datasets.Dataset, YAXArray} && hasfield(Dataset, name)
+        return getfield(tree.data,name)
     elseif name == :scalar
         return tree.data[1]
     else

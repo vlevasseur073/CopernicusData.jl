@@ -129,6 +129,9 @@ The [`YAXTrees.isomorphic`](@ref) function returns a boolean whether 2 trees are
 Two `YAXTree` are isomorphic if they have the exact same tree structure and if the data contained in equivalent node
 is the same type (`YAXArrays.YAXArray` or `YAXArrays.Datasets.Dataset`) and have the same variables and same dimensions. 
 
+```julia
+isomorphic(tree1, tree2)  # Returns true if both trees have the same structure and data
+```
 
 ## Advanced Features
 
