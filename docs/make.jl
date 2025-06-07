@@ -1,7 +1,6 @@
 using Documenter
 using CopernicusData
 push!(LOAD_PATH, "../src")
-using Plots
 
 makedocs(
     sitename = "CopernicusData.jl",
