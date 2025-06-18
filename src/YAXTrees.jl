@@ -7,9 +7,11 @@ using YAXArrays, Zarr
 using Dagger
 using JSON3
 using Mmap
+using NetCDF
 # using Graphs, GraphPlot, Colors
 import ..CopernicusData: get_AWS_config, s3_get_object, NotImplementedError
 
+include("safe.jl")
 
 """
     YAXTree
@@ -124,7 +126,9 @@ function Base.getproperty(tree::YAXTree, name::Symbol)
         return tree.children[String(name)]
     elseif hasproperty(tree.data, name)
         return getproperty(tree.data,name)
-    elseif tree.data isa Union{YAXArrays.Datasets.Dataset, YAXArray} && hasfield(Dataset, name)
+    elseif tree.data isa YAXArrays.Datasets.Dataset && hasfield(Dataset, name)
+        return getfield(tree.data,name)
+    elseif tree.data isa YAXArray && hasfield(YAXArray, name)
         return getfield(tree.data,name)
     elseif name == :scalar
         return tree.data[1]
@@ -279,7 +283,7 @@ function add_children_full_path!(tree::YAXTree, path::String, data::Union{Nothin
 end
 
 """
-    open_datatree(path::String, driver::Union{Nothing,Symbol}=nothing; name::String="root")::YAXTree
+    open_datatree(path::String, driver::Union{Nothing,Symbol}=nothing; name::String="root", mapping::Union{Nothing, String}=nothing)::YAXTree
 
 Open a data product and create a YAXTree representation of its structure. The driver is automatically detected from the file extension
 or can be specified manually.
@@ -310,7 +314,12 @@ dt = open_datatree("data.SEN3", :sen3)
 dt = open_datatree("s3://bucket/path/data.zarr")
 ```
 """
-function open_datatree(path::String, driver::Union{Nothing,Symbol}=nothing;name::String="root")::YAXTree
+function open_datatree(
+    path::String,
+    driver::Union{Nothing,Symbol}=nothing;
+    name::String="root",
+    mapping::Union{String,Nothing}=nothing
+)::YAXTree
     tmp_path, ext = splitext(rstrip(path,'/'))
     archive = false
     if ext == ".zip"
@@ -336,7 +345,7 @@ function open_datatree(path::String, driver::Union{Nothing,Symbol}=nothing;name:
     if driver == :zarr
         return open_zarr_datatree(path,name=name, archive=archive)
     elseif driver == :sen3
-        return open_sen3_datatree(path)
+        return open_sen3_datatree(path,mapping)
     elseif driver == :json
         return open_json_datatree(path,name=name)
     else
@@ -497,8 +506,102 @@ function open_json_datatree(path::String;name::String="root")::YAXTree
 
 end
 
-function open_sen3_datatree(path)
-    throw(NotImplementedError("This feature will be implemented in the future."))
+"""
+    open_sen3_datatree(path::String, mapping_file::String)::YAXTree
+
+Open a Sentinel-3 SEN3 product folder and create a YAXTree representation based on a mapping file.
+
+# Arguments
+- `path::String`: Path to the SEN3 product folder
+- `mapping_file::String`: Path to the JSON mapping file that defines how to organize the data
+
+# Returns
+- `YAXTree`: A tree representation of the Sentinel-3 data structure
+
+# Throws
+- `Exception`: If the folder doesn't exist or can't be opened
+"""
+function open_sen3_datatree(path::String, mapping_file::Union{String,Nothing} = nothing)::YAXTree
+    # Verify product path exists
+    if !isdir(path)
+        throw(ArgumentError("Product Path does not exist: $path"))
+    end
+
+    # Get mapping_file according to product_type
+    if isnothing(mapping_file)
+        # TODO: Parse SEN3 manifest to determine product type
+        # manifest_path = joinpath(path, "xfdumanifest.xml")
+        product_name = basename(rstrip(path,'/'))
+        product_type = product_name[5:12]  # Extract product type from name (e.g., "OL_1_ERR", "SL_2")
+        try
+            mapping_file = TYPE_TO_MAPPING[product_type]
+        catch e
+            if isa(e, KeyError)
+                @error "Could not find corresponding mapping for product: $product"
+            end
+            throw(e)
+        end
+        mapping_file = TYPE_TO_MAPPING[product_type]
+    end
+
+    # Create root tree node
+    tree = YAXTree("root")
+    
+    # Read mapping file if provided
+    if isfile(mapping_file)
+        mapping = JSON3.read(read(mapping_file, String))
+    else
+        @error "No mapping file provided and couldn't determine default mapping: $mapping_file"
+        throw(Exception)
+    end
+
+    # Process data according to mapping
+    if haskey(mapping, :data_mapping)
+        for (group_path, file_mappings) in mapping[:data_mapping]
+            @show group_path
+            mapped_vars = Dict{Symbol, YAXArray}()
+            for (nc_file, var_mappings) in file_mappings
+                file_path = joinpath(path, String(nc_file))
+                if !isfile(file_path)
+                    @warn "Mapped file not found: $file_path"
+                    continue
+                end
+
+                @show nc_file
+                try
+                    # Open dataset using YAXArrays
+                    ds = open_dataset(file_path)
+                    
+                    # Create dataset with mapped variables
+                    for (src_var, dest_var) in var_mappings
+                        if haskey(ds.cubes, Symbol(src_var))
+                            mapped_vars[Symbol(dest_var)] = ds.cubes[Symbol(src_var)]
+                        end
+                    end
+                    # @show mapped_vars
+                    
+                    # return tree
+                catch e
+                    @warn "Failed to process NetCDF file $file_path: $e"
+                    continue
+                end
+                
+                
+            end
+            if !isempty(mapped_vars)
+                # Create new dataset with mapped variables
+                yax_dataset = Dataset(; mapped_vars...)
+                # Add to tree at specified path
+                add_children_full_path!(tree, String(group_path), yax_dataset)
+            end
+        end
+    end
+
+    if haskey(mapping, "chunk_sizes")
+        tree.properties["chunk_sizes"] = mapping["chunk_sizes"]
+    end
+
+    return tree
 end
 
 # Iterator state:  Keeps track of the current node and the order of visiting

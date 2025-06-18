@@ -5,8 +5,10 @@
 
 # CopernicusData.jl
 
-CopernicusData (*Earth Observation Processing Framework*) is a framework to be used for Earth Observation satelite data processors.
+CopernicusData is a framework for Earth Observation satellite data processing.
 It defines a data structure for managing, storing EO data and a light orchestration framework to implement and chain processing steps.
+
+![](docs/resources/s3a_lst_brazil.png)
 
 ## Data Structure
 
@@ -17,10 +19,36 @@ The data representation is based on [`YAXArrays.jl`](https://github.com/JuliaDat
 ### `YAXTrees` module
 
  The `YAXTrees` module provide a hierarchical tree structure of `YAXArrays` or `Datasets`.
+ It is particularly useful for handling any kind of complex data structures like Zarr groups or JSON hierarchies.
 
-Using Zarr backend, a recursive zarr structure representing Copernicus product can be accessed with the `open_datatree`
+More specifically, using the Zarr backend, a recursive zarr structure representing Copernicus product can be accessed with the `open_datatree`
 function.
+A SEN3 driver (*in progress*) also enables to open Sentinel-3 products using the former SAFE data format.
 Using the feature from YAXArrays.jl, based on DiskArrays.jl, the data is lazy loaded.
+
+
+#### Creating Trees
+
+```julia
+# Create an empty root node
+root = YAXTree()
+
+# Create a node with a specific name
+node = YAXTree("mynode")
+
+# Create a node with data
+using YAXArrays
+data = YAXArray((Dim{:rows}(1:10),), collect(1:10))
+data_node = YAXTree("data_node", data=data)
+
+# Add children to a tree
+root = YAXTree()
+add_children!(root, "child1")  # Add empty child
+add_children!(root, "child2", data)  # Add child with data
+
+# Add nested children using a path
+add_children_full_path!(root, "path/to/deep/child", data)
+```
 
 ### `EOProduct` module
 
@@ -31,3 +59,7 @@ Using the feature from YAXArrays.jl, based on DiskArrays.jl, the data is lazy lo
 A light orchestration is providing by the ̀`EOTriggering` module.
 
 
+## Release note
+
+For further details, have a look at the release note:
+![https://vlevasseur073.github.io/CopernicusData.jl/main/release_notes/](https://vlevasseur073.github.io/CopernicusData.jl/dev/release_notes/)

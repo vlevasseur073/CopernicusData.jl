@@ -1,0 +1,214 @@
+{
+    "chunk_sizes": {
+        "rows": 1024,
+        "columns": 1024
+    },
+    "data_mapping": {
+        "/conditions/image": {
+            "geo_coordinates.nc": [
+                [
+                    "latitude",
+                    "latitude"
+                ],
+                [
+                    "longitude",
+                    "longitude"
+                ],
+                [
+                    "altitude",
+                    "altitude"
+                ]
+            ],
+            "instrument_data.nc": [
+                [
+                    "detector_index",
+                    "detector_index"
+                ],
+                [
+                    "frame_offset",
+                    "frame_offset"
+                ]
+            ]
+        },
+        "/conditions/time": {
+            "time_coordinates.nc": [
+                [
+                    "time_stamp",
+                    "time_stamp"
+                ]
+            ]
+        },
+        "/measurements": {
+            "geo_coordinates.nc": [
+                [
+                    "latitude",
+                    "latitude"
+                ],
+                [
+                    "longitude",
+                    "longitude"
+                ]
+            ],
+            "rc_gifapar.nc": [
+                [
+                    "RC681",
+                    "rc681"
+                ],
+                [
+                    "RC865",
+                    "rc865"
+                ]
+            ],
+            "gifapar.nc": [
+                [
+                    "GIFAPAR",
+                    "gifapar"
+                ]
+            ],
+            "otci.nc": [
+                [
+                    "OTCI",
+                    "otci"
+                ]
+            ],
+            "iwv.nc": [
+                [
+                    "IWV",
+                    "iwv"
+                ]
+            ]
+        },
+        "/quality": {
+            "geo_coordinates.nc": [
+                [
+                    "latitude",
+                    "latitude"
+                ],
+                [
+                    "longitude",
+                    "longitude"
+                ]
+            ],
+            "lqsf.nc": [
+                [
+                    "LQSF",
+                    "lqsf"
+                ]
+            ],
+            "otci.nc": [
+                [
+                    "OTCI_quality_flags",
+                    "otci_quality_flags"
+                ],
+                [
+                    "OTCI_unc",
+                    "otci_unc"
+                ]
+            ],
+            "gifapar.nc": [
+                [
+                    "GIFAPAR_unc",
+                    "gifapar_unc"
+                ]
+            ],
+            "rc_gifapar.nc": [
+                [
+                    "RC681_unc",
+                    "rc681_unc"
+                ],
+                [
+                    "RC865_unc",
+                    "rc865_unc"
+                ]
+            ],
+            "iwv.nc": [
+                [
+                    "IWV_unc",
+                    "iwv_unc"
+                ]
+            ]
+        },
+        "/conditions/geometry": {
+            "tie_geo_coordinates.nc": [
+                [
+                    "latitude",
+                    "latitude"
+                ],
+                [
+                    "longitude",
+                    "longitude"
+                ]
+            ],
+            "tie_geometries.nc": [
+                [
+                    "OAA",
+                    "oaa"
+                ],
+                [
+                    "OZA",
+                    "oza"
+                ],
+                [
+                    "SAA",
+                    "saa"
+                ],
+                [
+                    "SZA",
+                    "sza"
+                ]
+            ]
+        },
+        "/conditions/meteorology": {
+            "tie_meteo.nc": [
+                [
+                    "atmospheric_temperature_profile",
+                    "temperature_profile"
+                ],
+                [
+                    "horizontal_wind",
+                    "horizontal_wind"
+                ],
+                [
+                    "humidity",
+                    "humidity"
+                ],
+                [
+                    "reference_pressure_level",
+                    "tie_pressure_levels"
+                ],
+                [
+                    "sea_level_pressure",
+                    "sea_level_pressure"
+                ],
+                [
+                    "total_columnar_water_vapour",
+                    "total_columnar_water_vapour"
+                ],
+                [
+                    "total_ozone",
+                    "total_ozone"
+                ]
+            ]
+        },
+        "/conditions/instrument": {
+            "instrument_data.nc": [
+                [
+                    "FWHM",
+                    "fwhm"
+                ],
+                [
+                    "lambda0",
+                    "lambda0"
+                ],
+                [
+                    "relative_spectral_covariance",
+                    "relative_spectral_covariance"
+                ],
+                [
+                    "solar_flux",
+                    "solar_flux"
+                ]
+            ]
+        }
+    }
+}

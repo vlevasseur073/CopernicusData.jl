@@ -1,0 +1,404 @@
+{
+    "chunk_sizes": {
+        "rows": 1024,
+        "columns": 1024
+    },
+    "data_mapping": {
+        "/measurements": {
+            "geo_coordinates.nc": [
+                [
+                    "latitude",
+                    "latitude"
+                ],
+                [
+                    "longitude",
+                    "longitude"
+                ]
+            ],
+            "time_coordinates.nc": [
+                [
+                    "time_stamp",
+                    "time_stamp"
+                ]
+            ],
+            "Oa01_radiance.nc": [
+                [
+                    "Oa01_radiance",
+                    "oa01_radiance"
+                ]
+            ],
+            "Oa02_radiance.nc": [
+                [
+                    "Oa02_radiance",
+                    "oa02_radiance"
+                ]
+            ],
+            "Oa03_radiance.nc": [
+                [
+                    "Oa03_radiance",
+                    "oa03_radiance"
+                ]
+            ],
+            "Oa04_radiance.nc": [
+                [
+                    "Oa04_radiance",
+                    "oa04_radiance"
+                ]
+            ],
+            "Oa05_radiance.nc": [
+                [
+                    "Oa05_radiance",
+                    "oa05_radiance"
+                ]
+            ],
+            "Oa06_radiance.nc": [
+                [
+                    "Oa06_radiance",
+                    "oa06_radiance"
+                ]
+            ],
+            "Oa07_radiance.nc": [
+                [
+                    "Oa07_radiance",
+                    "oa07_radiance"
+                ]
+            ],
+            "Oa08_radiance.nc": [
+                [
+                    "Oa08_radiance",
+                    "oa08_radiance"
+                ]
+            ],
+            "Oa09_radiance.nc": [
+                [
+                    "Oa09_radiance",
+                    "oa09_radiance"
+                ]
+            ],
+            "Oa10_radiance.nc": [
+                [
+                    "Oa10_radiance",
+                    "oa10_radiance"
+                ]
+            ],
+            "Oa11_radiance.nc": [
+                [
+                    "Oa11_radiance",
+                    "oa11_radiance"
+                ]
+            ],
+            "Oa12_radiance.nc": [
+                [
+                    "Oa12_radiance",
+                    "oa12_radiance"
+                ]
+            ],
+            "Oa13_radiance.nc": [
+                [
+                    "Oa13_radiance",
+                    "oa13_radiance"
+                ]
+            ],
+            "Oa14_radiance.nc": [
+                [
+                    "Oa14_radiance",
+                    "oa14_radiance"
+                ]
+            ],
+            "Oa15_radiance.nc": [
+                [
+                    "Oa15_radiance",
+                    "oa15_radiance"
+                ]
+            ],
+            "Oa16_radiance.nc": [
+                [
+                    "Oa16_radiance",
+                    "oa16_radiance"
+                ]
+            ],
+            "Oa17_radiance.nc": [
+                [
+                    "Oa17_radiance",
+                    "oa17_radiance"
+                ]
+            ],
+            "Oa18_radiance.nc": [
+                [
+                    "Oa18_radiance",
+                    "oa18_radiance"
+                ]
+            ],
+            "Oa19_radiance.nc": [
+                [
+                    "Oa19_radiance",
+                    "oa19_radiance"
+                ]
+            ],
+            "Oa20_radiance.nc": [
+                [
+                    "Oa20_radiance",
+                    "oa20_radiance"
+                ]
+            ],
+            "Oa21_radiance.nc": [
+                [
+                    "Oa21_radiance",
+                    "oa21_radiance"
+                ]
+            ]
+        },
+        "/conditions/image": {
+            "instrument_data.nc": [
+                [
+                    "frame_offset",
+                    "frame_offset"
+                ],
+                [
+                    "detector_index",
+                    "detector_index"
+                ]
+            ],
+            "geo_coordinates.nc": [
+                [
+                    "latitude",
+                    "latitude"
+                ],
+                [
+                    "longitude",
+                    "longitude"
+                ],
+                [
+                    "altitude",
+                    "altitude"
+                ]
+            ]
+        },
+        "/conditions/geometry": {
+            "tie_geo_coordinates.nc": [
+                [
+                    "latitude",
+                    "latitude"
+                ],
+                [
+                    "longitude",
+                    "longitude"
+                ]
+            ],
+            "tie_geometries.nc": [
+                [
+                    "OAA",
+                    "oaa"
+                ],
+                [
+                    "OZA",
+                    "oza"
+                ],
+                [
+                    "SAA",
+                    "saa"
+                ],
+                [
+                    "SZA",
+                    "sza"
+                ]
+            ]
+        },
+        "/quality": {
+            "geo_coordinates.nc": [
+                [
+                    "latitude",
+                    "latitude"
+                ],
+                [
+                    "longitude",
+                    "longitude"
+                ]
+            ],
+            "qualityFlags.nc": [
+                [
+                    "quality_flags",
+                    "quality_flags"
+                ]
+            ],
+            "Oa01_radiance_unc.nc": [
+                [
+                    "Oa01_radiance_unc",
+                    "oa01_radiance_unc"
+                ]
+            ],
+            "Oa02_radiance_unc.nc": [
+                [
+                    "Oa02_radiance_unc",
+                    "oa02_radiance_unc"
+                ]
+            ],
+            "Oa03_radiance_unc.nc": [
+                [
+                    "Oa03_radiance_unc",
+                    "oa03_radiance_unc"
+                ]
+            ],
+            "Oa04_radiance_unc.nc": [
+                [
+                    "Oa04_radiance_unc",
+                    "oa04_radiance_unc"
+                ]
+            ],
+            "Oa05_radiance_unc.nc": [
+                [
+                    "Oa05_radiance_unc",
+                    "oa05_radiance_unc"
+                ]
+            ],
+            "Oa06_radiance_unc.nc": [
+                [
+                    "Oa06_radiance_unc",
+                    "oa06_radiance_unc"
+                ]
+            ],
+            "Oa07_radiance_unc.nc": [
+                [
+                    "Oa07_radiance_unc",
+                    "oa07_radiance_unc"
+                ]
+            ],
+            "Oa08_radiance_unc.nc": [
+                [
+                    "Oa08_radiance_unc",
+                    "oa08_radiance_unc"
+                ]
+            ],
+            "Oa09_radiance_unc.nc": [
+                [
+                    "Oa09_radiance_unc",
+                    "oa09_radiance_unc"
+                ]
+            ],
+            "Oa10_radiance_unc.nc": [
+                [
+                    "Oa10_radiance_unc",
+                    "oa10_radiance_unc"
+                ]
+            ],
+            "Oa11_radiance_unc.nc": [
+                [
+                    "Oa11_radiance_unc",
+                    "oa11_radiance_unc"
+                ]
+            ],
+            "Oa12_radiance_unc.nc": [
+                [
+                    "Oa12_radiance_unc",
+                    "oa12_radiance_unc"
+                ]
+            ],
+            "Oa13_radiance_unc.nc": [
+                [
+                    "Oa13_radiance_unc",
+                    "oa13_radiance_unc"
+                ]
+            ],
+            "Oa14_radiance_unc.nc": [
+                [
+                    "Oa14_radiance_unc",
+                    "oa14_radiance_unc"
+                ]
+            ],
+            "Oa15_radiance_unc.nc": [
+                [
+                    "Oa15_radiance_unc",
+                    "oa15_radiance_unc"
+                ]
+            ],
+            "Oa16_radiance_unc.nc": [
+                [
+                    "Oa16_radiance_unc",
+                    "oa16_radiance_unc"
+                ]
+            ],
+            "Oa17_radiance_unc.nc": [
+                [
+                    "Oa17_radiance_unc",
+                    "oa17_radiance_unc"
+                ]
+            ],
+            "Oa18_radiance_unc.nc": [
+                [
+                    "Oa18_radiance_unc",
+                    "oa18_radiance_unc"
+                ]
+            ],
+            "Oa19_radiance_unc.nc": [
+                [
+                    "Oa19_radiance_unc",
+                    "oa19_radiance_unc"
+                ]
+            ],
+            "Oa20_radiance_unc.nc": [
+                [
+                    "Oa20_radiance_unc",
+                    "oa20_radiance_unc"
+                ]
+            ],
+            "Oa21_radiance_unc.nc": [
+                [
+                    "Oa21_radiance_unc",
+                    "oa21_radiance_unc"
+                ]
+            ]
+        },
+        "/conditions/meteorology": {
+            "tie_meteo.nc": [
+                [
+                    "atmospheric_temperature_profile",
+                    "atmospheric_temperature_profile"
+                ],
+                [
+                    "horizontal_wind",
+                    "horizontal_wind"
+                ],
+                [
+                    "humidity",
+                    "humidity"
+                ],
+                [
+                    "reference_pressure_level",
+                    "tie_pressure_levels"
+                ],
+                [
+                    "sea_level_pressure",
+                    "sea_level_pressure"
+                ],
+                [
+                    "total_columnar_water_vapour",
+                    "total_columnar_water_vapour"
+                ],
+                [
+                    "total_ozone",
+                    "total_ozone"
+                ]
+            ]
+        },
+        "/conditions/instrument": {
+            "instrument_data.nc": [
+                [
+                    "FWHM",
+                    "fwhm"
+                ],
+                [
+                    "lambda0",
+                    "lambda0"
+                ],
+                [
+                    "relative_spectral_covariance",
+                    "relative_spectral_covariance"
+                ],
+                [
+                    "solar_flux",
+                    "solar_flux"
+                ]
+            ]
+        }
+    }
+}

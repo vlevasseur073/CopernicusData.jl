@@ -99,8 +99,86 @@ end
 end
 
 @testset "Testing YAXTree from SEN3" begin
-    path = joinpath(dirname(@__FILE__), "resources/safe.SEN3")
-    @test_throws NotImplementedError open_datatree(path) 
+    using CopernicusData: YAXTree, get_AWS_config, s3_list_bucket, NotImplementedError
+    using NCDatasets
+    using JSON3
+    
+    # Test with invalid path
+    @test_throws ArgumentError open_datatree("/invalid/path", :sen3)
+    
+    # Prepare test SEN3 directory and files
+    test_sen3_path = joinpath(tempdir(), "test_OL_1_ERR___123.SEN3")
+    mkpath(test_sen3_path)
+    
+    # Create test NetCDF files
+    geo_coords_path = joinpath(test_sen3_path, "geo_coordinates.nc")
+    ds = NCDataset(geo_coords_path,"c")
+    
+    # Define dimensions
+    defDim(ds,"rows", 10)
+    defDim(ds,"columns", 10)
+    
+    # Create variables
+    lat = defVar(ds,"latitude", Float32, ("rows", "columns"))
+    lon = defVar(ds,"longitude",Float32, ("rows", "columns"))
+    
+    # Write data
+    lat[:,:] = repeat(collect(1:10)', 10)
+    lon[:,:] = repeat(collect(1:10)', 10)
+
+    close(ds)
+
+    # Create a test mapping file
+    mapping_dict = Dict(
+        "data_mapping" => Dict(
+                "/coordinates" => Dict(
+                    "geo_coordinates.nc" => [
+                        [
+                        "latitude",
+                        "lats"
+                        ],
+                        [
+                        "longitude",
+                        "lons"
+                        ]
+                    ]
+                ),
+            ),
+        "chunk_sizes" => Dict(
+            "rows" => 100,
+            "columns" => 100
+        )
+    )
+    
+    mapping_path = joinpath(test_sen3_path, "mapping.json")
+    open(mapping_path, "w") do io
+        JSON3.write(io, mapping_dict)
+    end
+
+    # Test with valid path and mapping
+    try
+        tree = open_datatree(test_sen3_path, :sen3; mapping=mapping_path)
+        
+        # Test basic tree structure
+        @test tree isa YAXTree
+        @test !isempty(tree.properties)
+        @test haskey(tree.properties, "chunk_sizes")
+        
+        # Test coordinates group
+        @test haskey(tree.children, "coordinates")
+        coords = tree.coordinates
+        @test coords isa YAXTree
+        @test coords.data isa Dataset
+        
+        # Test data content
+        @test haskey(coords.data.cubes, :lats)
+        @test haskey(coords.data.cubes, :lons)
+        @test coords.lats.data[1,1] == 1.0f0
+        @test coords.lons.data[1,1] == 1.0f0
+    finally
+        # Clean up test directory
+        rm(test_sen3_path, recursive=true)
+    end
 end
 
 @testset "Testing YAXTrees.where" begin

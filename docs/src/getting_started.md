@@ -298,4 +298,23 @@ Notes:
 - Non-existent variables are silently ignored
 - The function operates on all nodes in the tree simultaneously
 - The original tree is not modified; a new tree is returned
-````
+
+## Working with Sentinel-3 products
+
+### EOPF format
+
+The new ESA EOPF format aims at providing a generic data interfac that can be used to represent in an homogeneous way the Copernicus Sentinel-1, Sentinel-2 and Sentinel-3 (Land) mission products:
+it is a new harmonized data model for the Copernicus products.
+
+See [https://cpm.pages.eopf.copernicus.eu/eopf-cpm/main/eoproduct-user-guide/product_description.html](https://cpm.pages.eopf.copernicus.eu/eopf-cpm/main/eoproduct-user-guide/product_description.html) for a description of the generic product called `EOProduct` and [PSD](https://cpm.pages.eopf.copernicus.eu/eopf-cpm/main/PSFD/index.html) which document the Product Structure and Format Definition.
+
+### Legacy SAFE products
+
+The Standard Archive Format for Europe (SAFE) format specification is the common basis for the Sentinel data products.
+It has been designed to act as a common format for archiving and conveying data within ESA Earth Observation archiving facilities.
+SAFE was recommended for the harmonisation of the GMES missions by the GMES Product Harmonisation Study.
+
+See [https://sentiwiki.copernicus.eu/web/safe-format](https://sentiwiki.copernicus.eu/web/safe-format) for further details.
+
+`YAXTrees.open_datatree` enable to open a SAFE product and convert it in-memory into an EOPF format. The data representation is the `YAXTree` structure.
+
