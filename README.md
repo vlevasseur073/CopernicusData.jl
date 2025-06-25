@@ -50,14 +50,37 @@ add_children!(root, "child2", data)  # Add child with data
 add_children_full_path!(root, "path/to/deep/child", data)
 ```
 
-### `EOProduct` module
-
-***deprecated***
-
 ## Orchestration
 
 A light orchestration is providing by the ̀`EOTriggering` module.
 
+* Run processing workflows from a TOML payload file
+* Support for configurable logging levels (Debug, Info)
+* Processing workflow configuration with:
+  * Module and processing unit specification
+  * Input product configuration
+  * Parameter handling for processing units
+  * Support for auxiliary data files
+* Simple error handling and reporting
+* Modular processing unit execution through function calls
+* Support for multiple input products as YAXTrees
+
+
+## Utilities
+
+To ease basic actions dealing with zarr products and S3 object storage, few utilies and helper functions have been implemented:
+
+* Utilities for uploading Zarr datasets and files to S3-compatible object storage
+* Functions for walking Zarr directory structures and uploading all contents with correct content types
+* Support for custom S3 object metadata and content type inference
+* Error handling and logging for upload operations
+* AWS configuration helpers:
+  * Read AWS credentials and config from INI files or environment variables
+  * Support for custom endpoints and regions (e.g., for on-prem/cloud S3)
+  * Custom AWS config struct for flexible service URL generation
+* S3 helper functions:
+  * List objects in a bucket or prefix
+  * Retrieve objects from S3 by full path
 
 ## Release note
 
