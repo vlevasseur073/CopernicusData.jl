@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Sentinel-3 zarr products · CopernicusData.jl</title><meta name="title" content="Sentinel-3 zarr products · CopernicusData.jl"/><meta property="og:title" content="Sentinel-3 zarr products · CopernicusData.jl"/><meta property="twitter:title" content="Sentinel-3 zarr products · CopernicusData.jl"/><meta name="description" content="Documentation for CopernicusData.jl."/><meta property="og:description" content="Documentation for CopernicusData.jl."/><meta property="twitter:description" content="Documentation for CopernicusData.jl."/><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../search_index.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../quickstart/">CopernicusData.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../quickstart/">QuickStart</a></li><li><a class="tocitem" href="../">Home</a></li><li><a class="tocitem" href="../getting_started/">Getting Started</a></li><li><a class="tocitem" href="../release_notes/">Release Notes</a></li><li><span class="tocitem">Examples</span><ul><li class="is-active"><a class="tocitem" href>Sentinel-3 zarr products</a><ul class="internal"><li><a class="tocitem" href="#OLCI-Level-1"><span>OLCI Level-1</span></a></li><li><a class="tocitem" href="#SLSTR-Level-2-FRP"><span>SLSTR Level-2 FRP</span></a></li></ul></li><li><a class="tocitem" href="../notebooks/">Notebook tutorials</a></li></ul></li><li><a class="tocitem" href="../api/">API Reference</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Examples</a></li><li class="is-active"><a href>Sentinel-3 zarr products</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Sentinel-3 zarr products</a></li></ul></nav><div class="docs-right"><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Sentinel-3-zarr-products"><a class="docs-heading-anchor" href="#Sentinel-3-zarr-products">Sentinel-3 zarr products</a><a id="Sentinel-3-zarr-products-1"></a><a class="docs-heading-anchor-permalink" href="#Sentinel-3-zarr-products" title="Permalink"></a></h1><h2 id="OLCI-Level-1"><a class="docs-heading-anchor" href="#OLCI-Level-1">OLCI Level-1</a><a id="OLCI-Level-1-1"></a><a class="docs-heading-anchor-permalink" href="#OLCI-Level-1" title="Permalink"></a></h2><pre class="documenter-example-output"><code class="nohighlight hljs ansi">&quot;https://common.s3.sbg.perf.cloud.ovh.net/eoproducts/S03OLCEFR_20230506T015316_0180_B117_T883.zarr.zip&quot;</code></pre><pre><code class="language-julia hljs">local_path = joinpath(tempdir(),OLCEFR)
+Downloads.download(olci_path, local_path)
+efr = open_datatree(local_path)
+efr</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">📂 root
+├─ 📂 conditions
+├─ ├─ 📂 geometry
+├─ ├─ 📂 image
+├─ ├─ 📂 instrument
+├─ ├─ 📂 meteorology
+├─ └─ 📂 orphans
+├─ 📂 measurements
+├─ └─ 📂 orphans
+└─ 📂 quality
+└─ └─ 📂 orphans
+</code></pre><p>The product is represented by a hierarchical tree structure <code>YAXTrees.YAXTree</code></p><h3 id="Opening-measurements-data"><a class="docs-heading-anchor" href="#Opening-measurements-data">Opening measurements data</a><a id="Opening-measurements-data-1"></a><a class="docs-heading-anchor-permalink" href="#Opening-measurements-data" title="Permalink"></a></h3><pre><code class="language-julia hljs">rad = efr.measurements.oa01_radiance
+rad</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr90">┌ </span><span class="sgr38_5" style="color:#ff875f">4865</span>×<span class="sgr38_5" style="color:#0087d7">4092</span> YAXArray{Union{Missing, Float64}, 2}<span class="sgr90"> ┐</span>
+<span class="sgr90">├────────────────────────────────────────────────┴─────────── dims ┐</span>
+  <span class="sgr38_5" style="color:#ff875f">↓ columns</span> Sampled{Int64} <span class="sgr38_5" style="color:#ff875f">1:4865</span> <span class="sgr38_5" style="color:#808080">ForwardOrdered</span> <span class="sgr38_5" style="color:#808080">Regular</span> <span class="sgr38_5" style="color:#808080">Points</span>,
+  <span class="sgr38_5" style="color:#0087d7">→ rows</span> Sampled{Int64} <span class="sgr38_5" style="color:#0087d7">1:4092</span> <span class="sgr38_5" style="color:#808080">ForwardOrdered</span> <span class="sgr38_5" style="color:#808080">Regular</span> <span class="sgr38_5" style="color:#808080">Points</span>
+<span class="sgr90">├──────────────────────────────────────────────────────── metadata ┤</span>
+  Dict{String, Any} with 12 entries:
+  &quot;long_name&quot;     =&gt; &quot;TOA radiance for OLCI acquisition band oa01&quot;
+  &quot;scale_factor&quot;  =&gt; 0.0136349
+  &quot;name&quot;          =&gt; &quot;oa01_radiance&quot;
+  &quot;add_offset&quot;    =&gt; 0.0
+  &quot;standard_name&quot; =&gt; &quot;toa_upwelling_spectral_radiance&quot;
+  &quot;valid_min&quot;     =&gt; 0
+  &quot;valid_max&quot;     =&gt; 65534
+  &quot;coordinates&quot;   =&gt; &quot;time_stamp latitude longitude&quot;
+  &quot;_FillValue&quot;    =&gt; 0xffff
+  &quot;units&quot;         =&gt; &quot;mW.m-2.sr-1.nm-1&quot;
+  &quot;short_name&quot;    =&gt; &quot;oa01_radiance&quot;
+  &quot;missing_value&quot; =&gt; 0xffff
+<span class="sgr90">├─────────────────────────────────────────────────── loaded lazily ┤</span>
+  data size: 151.88 MB
+<span class="sgr90">└──────────────────────────────────────────────────────────────────┘</span></code></pre><p>The nodes of the <code>YAXTree</code> are <code>YAXArrays.YAXArray</code> or <code>YAXArrays.Dataset</code></p><pre><code class="language-julia hljs">rad.data</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">4865×4092 DiskArrayTools.CFDiskArray{Union{Missing, Float64}, 2, UInt16, Zarr.ZArray{UInt16, 2, Zarr.BloscCompressor, Zarr.ConsolidatedStore{Zarr.ZipStore{Vector{UInt8}}}}, Float64}
+
+Chunked: (
+    [1024, 1024, 1024, 1024, 769]
+    [1024, 1024, 1024, 1020]
+)
+</code></pre><p>The underlying data is a <code>CFDiskArray</code></p><h3 id="Plot-data"><a class="docs-heading-anchor" href="#Plot-data">Plot data</a><a id="Plot-data-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-data" title="Permalink"></a></h3><p>We use <code>Makie.jl</code> to plot the data.</p><pre><code class="language-julia hljs">lat=efr.measurements.latitude.data
+lon=efr.measurements.longitude.data
+val=replace(rad.data, missing =&gt; 0.0)
+
+min,max = minimum(val), maximum(val)
+
+fig=Figure(size=(1200,600))
+ax1=Axis(fig[1, 1], title=rad.properties[&quot;long_name&quot;],
+     xlabel=&quot;Longitude&quot;, ylabel=&quot;Latitude&quot;)
+s=surface!(ax1,lon, lat, zeros(size(lon));
+     color=val,colorrange=(min,max),colormap=:rainbow, shading=NoShading)
+     Colorbar(fig[1, 2], s)
+ax2=Axis(fig[1, 3], title=rad.properties[&quot;long_name&quot;],
+     xlabel=&quot;Columns&quot;, ylabel=&quot;Rows&quot;)
+heatmap!(ax2, val, colormap=:rainbow, colorrange=(min,max))
+fig</code></pre><img src="3ebc1f1a.png" alt="Example block output"/><h3 id="Open-meteorological-conditions"><a class="docs-heading-anchor" href="#Open-meteorological-conditions">Open meteorological conditions</a><a id="Open-meteorological-conditions-1"></a><a class="docs-heading-anchor-permalink" href="#Open-meteorological-conditions" title="Permalink"></a></h3><pre><code class="language-julia hljs">meteo = efr.conditions.meteorology</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">📂 meteorology
+</code></pre><h3 id="Interpolate-the-atmospheric-temperature-at-p832.2-hPa"><a class="docs-heading-anchor" href="#Interpolate-the-atmospheric-temperature-at-p832.2-hPa">Interpolate the atmospheric temperature at p=832.2 hPa</a><a id="Interpolate-the-atmospheric-temperature-at-p832.2-hPa-1"></a><a class="docs-heading-anchor-permalink" href="#Interpolate-the-atmospheric-temperature-at-p832.2-hPa" title="Permalink"></a></h3><pre><code class="language-julia hljs">tp = linear_interpolation(meteo, &quot;atmospheric_temperature_profile&quot;, dims=&quot;pressure_level&quot;, value=832.2)
+fig=Figure(size=(800,600))
+ax=Axis(fig[1, 1], title=&quot;atmospheric_temperature_profile @ 832.2 hPa&quot;,
+     xlabel=&quot;tp_columns&quot;, ylabel=&quot;tp_rows&quot;)
+heatmap!(ax,tp.data)
+fig</code></pre><img src="1b9ba16c.png" alt="Example block output"/><h2 id="SLSTR-Level-2-FRP"><a class="docs-heading-anchor" href="#SLSTR-Level-2-FRP">SLSTR Level-2 FRP</a><a id="SLSTR-Level-2-FRP-1"></a><a class="docs-heading-anchor-permalink" href="#SLSTR-Level-2-FRP" title="Permalink"></a></h2><pre class="documenter-example-output"><code class="nohighlight hljs ansi">&quot;https://common.s3.sbg.perf.cloud.ovh.net/eoproducts/S03SLSFRP_20200908T182648_0179_A298_S883.zarr.zip&quot;</code></pre><pre><code class="language-julia hljs">local_path = joinpath(tempdir(),SLSFRP)
+Downloads.download(frp_path, local_path)
+frp = open_datatree(local_path)
+frp</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">📂 root
+├─ 📂 conditions
+├─ ├─ 📂 geometry
+├─ ├─ 📂 meteorology
+├─ ├─ 📂 processing
+├─ ├─ ├─ 📂 fnadir
+├─ ├─ ├─ └─ 📂 orphan
+├─ ├─ └─ 📂 inadir
+├─ ├─ └─ └─ 📂 orphan
+├─ ├─ 📂 time_an
+├─ ├─ 📂 time_bn
+├─ └─ 📂 time_in
+├─ 📂 measurements
+├─ ├─ 📂 anadir
+├─ ├─ 📂 bnadir
+├─ ├─ 📂 fnadir
+├─ ├─ └─ 📂 orphan
+├─ └─ 📂 inadir
+├─ └─ └─ 📂 orphan
+└─ 📂 quality
+└─ ├─ 📂 fnadir
+└─ └─ 📂 inadir
+</code></pre><p>The product is represented by a hierarchical tree structure <code>YAXTrees.YAXTree</code></p><h3 id="Opening-measurements-data-(1D)"><a class="docs-heading-anchor" href="#Opening-measurements-data-(1D)">Opening measurements data (1D)</a><a id="Opening-measurements-data-(1D)-1"></a><a class="docs-heading-anchor-permalink" href="#Opening-measurements-data-(1D)" title="Permalink"></a></h3><pre><code class="language-julia hljs">meas = frp.measurements.inadir
+meas</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">📂 inadir
+└─ 📂 orphan
+</code></pre><h3 id="Plot-Active-Fire-Pixel-on-a-Plate-Carrée-grid"><a class="docs-heading-anchor" href="#Plot-Active-Fire-Pixel-on-a-Plate-Carrée-grid">Plot Active Fire Pixel on a Plate-Carrée grid</a><a id="Plot-Active-Fire-Pixel-on-a-Plate-Carrée-grid-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-Active-Fire-Pixel-on-a-Plate-Carrée-grid" title="Permalink"></a></h3><pre><code class="language-julia hljs">using CairoMakie, GeoMakie
+
+frp_vals = Int64.(round.(frp.measurements.inadir.frp_mwir.data))
+fig = Figure(size=(800,600))
+ax = GeoAxis(fig[1,1]; dest = &quot;+proj=merc&quot;)
+GeoMakie.xlims!(ax, -125, -114)
+GeoMakie.ylims!(ax, 40, 50)
+lines!(ax, GeoMakie.coastlines(50), color=:black)
+s=GeoMakie.scatter!(ax,
+    frp.measurements.inadir.longitude.data,
+    frp.measurements.inadir.latitude.data,
+    color=frp_vals,
+    colormap=:thermal,
+    markersize=15,
+    colorrange=(0, 100),
+    )
+Colorbar(fig[1,2],s, ticks=0:20:100)
+fig</code></pre><img src="11cde3ee.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../release_notes/">« Release Notes</a><a class="docs-footer-nextpage" href="../notebooks/">Notebook tutorials »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.13.0 on <span class="colophon-date" title="Wednesday 25 June 2025 11:35">Wednesday 25 June 2025</span>. Using Julia version 1.11.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
