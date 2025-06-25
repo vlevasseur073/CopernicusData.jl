@@ -16,6 +16,10 @@ pkgversion(CopernicusData) # hide
 * Export YAXTrees.to_zarr function
 * isomorphic comparison of two `YAXTree`s
 
+**EOTriggering:**
+
+**utils:**
+
 
 ## History
 
@@ -26,7 +30,7 @@ pkgversion(CopernicusData) # hide
 is the same type (`YAXArrays.YAXArray` or `YAXArrays.Datasets.Dataset`) and have the same variables and same dimensions. 
 It does not compare the content of the arrays itself. See [`YAXTrees.isomorphic`](@ref)
 * Implement a direct access to YAXArray or Dataset field (cubes and axes)
-* Implement 
+* Implement reading Sentinel-3 SAFE products (OLCI and SLSTR), and converting it in-memory into EOPF-like `YAXTree` product structure
 * Improve documentation. Use `Makie.jl` for visualization
 
 ### v0.1.0
@@ -45,5 +49,5 @@ This is a beta release
 ## Known problems or limitations
  * Reading zipped zarr is not fully handled. Feature to be requested to Zarr.jl package [https://github.com/JuliaIO/Zarr.jl/issues/189](https://github.com/JuliaIO/Zarr.jl/issues/189). The current Zarrl.ZipStore handles files on the local filesystem not yet files on a cloud storage.
  * Basic interpolations are implemented. To be improved in the future releases, in connection with upcoming improvements of `YAXArrays.jl`
- * Limited support of Sentinel-3 SAFE format (OLCI, SLSTR L1 and L2 FRP). SLSTR L2 LST, SYN are currently missing. Other missions to come.
+ * Limited support of Sentinel-3 SAFE format (OLCI, SLSTR L1, L2 LST and L2 FRP). SYN are currently missing. Other missions to come.
 

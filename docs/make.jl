@@ -12,7 +12,8 @@ makedocs(
         "Getting Started" => "getting_started.md",
         "Release Notes" => "release_notes.md",
         "Examples" => Any[
-            "Sentinel-3 zarr products" =>"examples.md"
+            "Sentinel-3 zarr products" =>"examples.md",
+            "Notebook tutorials" => "notebooks.md",
         ],
         "api.md",
     ],
