@@ -294,7 +294,10 @@ or can be specified manually.
   - `:zarr`: For Zarr format files/directories
   - `:sen3`: For Sentinel-3 SEN3 format
   - `:json`: For JSON files
-- `name::String="root"`: Name for the root node of the tree
+# Keyword
+  - `name::String="root"`: Name for the root node of the tree
+  - `mapping::Union{String,Nothing}=nothing`: Optional mapping file for Sentinel-3 products. Default is pre-configured for specific product types
+  - `group::Union{String,Nothing}=nothing`: Optional group name to filter data to be opened
 
 # Returns
 - `YAXTree`: A tree representation of the data product structure
@@ -318,7 +321,8 @@ function open_datatree(
     path::String,
     driver::Union{Nothing,Symbol}=nothing;
     name::String="root",
-    mapping::Union{String,Nothing}=nothing
+    mapping::Union{String,Nothing}=nothing,
+    group::Union{String,Nothing}=nothing
 )::YAXTree
     tmp_path, ext = splitext(rstrip(path,'/'))
     archive = false
@@ -345,7 +349,7 @@ function open_datatree(
     if driver == :zarr
         return open_zarr_datatree(path,name=name, archive=archive)
     elseif driver == :sen3
-        return open_sen3_datatree(path,mapping)
+        return open_sen3_datatree(path,mapping_file=mapping, group=group)
     elseif driver == :json
         return open_json_datatree(path,name=name)
     else
@@ -514,6 +518,7 @@ Open a Sentinel-3 SEN3 product folder and create a YAXTree representation based 
 # Arguments
 - `path::String`: Path to the SEN3 product folder
 - `mapping_file::String`: Path to the JSON mapping file that defines how to organize the data
+- `group::Union{String,Nothing}=nothing`: Optional group name to filter data to be opened
 
 # Returns
 - `YAXTree`: A tree representation of the Sentinel-3 data structure
@@ -521,7 +526,7 @@ Open a Sentinel-3 SEN3 product folder and create a YAXTree representation based 
 # Throws
 - `Exception`: If the folder doesn't exist or can't be opened
 """
-function open_sen3_datatree(path::String, mapping_file::Union{String,Nothing} = nothing)::YAXTree
+function open_sen3_datatree(path::String; mapping_file::Union{String,Nothing} = nothing, group::Union{String,Nothing} = nothing)::YAXTree
     # Verify product path exists
     if !isdir(path)
         throw(ArgumentError("Product Path does not exist: $path"))
@@ -558,7 +563,10 @@ function open_sen3_datatree(path::String, mapping_file::Union{String,Nothing} = 
     # Process data according to mapping
     if haskey(mapping, :data_mapping)
         for (group_path, file_mappings) in mapping[:data_mapping]
-            @show group_path
+            if !isnothing(group) && !occursin(group,String(group_path))
+                continue  # Skip if group does not match
+            end
+            @debug group_path
             mapped_vars = Dict{Symbol, YAXArray}()
             for (nc_file, var_mappings) in file_mappings
                 file_path = joinpath(path, String(nc_file))
@@ -567,7 +575,7 @@ function open_sen3_datatree(path::String, mapping_file::Union{String,Nothing} = 
                     continue
                 end
 
-                @show nc_file
+                @debug nc_file
                 try
                     # Open dataset using YAXArrays
                     ds = open_dataset(file_path)
